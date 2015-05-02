@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
   `user_id` char(36) NOT NULL,
-  `username` varchar(64) unsigned NOT NULL,
+  `username` varchar(64) NOT NULL,
   `email` varchar(128) NOT NULL,
   `salt` char(16) NOT NULL,
   `pw_hash` char(32) NOT NULL,
