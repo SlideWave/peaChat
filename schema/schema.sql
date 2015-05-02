@@ -39,5 +39,7 @@ DROP TABLE IF EXISTS `open_chats`;
 CREATE TABLE `open_chats` (
   `user_id` char(36) NOT NULL,
   `conversation_id` char(32) NOT NULL,
-  PRIMARY KEY (`user_id`, `conversation_id`)
+  `title` varchar(128) NOT NULL,
+  `type` tinyint(4) NOT NULL,
+  PRIMARY KEY (`user_id`,`conversation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

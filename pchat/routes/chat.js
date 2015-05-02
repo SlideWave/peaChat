@@ -2,11 +2,11 @@ var express = require('express');
 var router = express.Router();
 var ChatMessage = require('../chatmessage');
 
-/* GET home page. */
-router.get('/', function(req, res) {
+/* GET the messages from a specific chat */
+router.get('/:id', function(req, res) {
     var sess = req.session;
 
-    ChatMessage.getRecentChatMessages(function (err, messages) {
+    ChatMessage.getRecentChatMessages(req.params.id, function (err, messages) {
         if (err) {
             console.error(err);
             res.status(500).send('Could not complete request');
@@ -14,12 +14,24 @@ router.get('/', function(req, res) {
         }
 
         res.render('chat',
-            {   title: 'Fitness Chat',
+            {   title: 'Chat',
                 userFirst: sess.userFirst,
                 messages: messages,
                 pageScript: 'chat.page.js',
                 session: sess });
     });
+});
+
+/**
+ * Displays a screen where a user can start a new IM session
+ */
+router.get('/im/new', function(req, res) {
+    var sess = req.session;
+
+    res.render('newim',
+    {   title: 'Send a new Instant Message',
+        username: sess.username,
+        session: sess });
 });
 
 router.get('/recent', function(req, res) {
