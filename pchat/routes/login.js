@@ -64,8 +64,9 @@ router.post('/register', function(req, res) {
                   res.redirect('/login/register?e=taken');
                 } else {
                   res.status(500).send('Could not complete request');
-                  return;
                 }
+
+                return;
             }
 
             res.redirect('/login');
