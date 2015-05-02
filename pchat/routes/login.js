@@ -38,21 +38,38 @@ router.get('/register', function(req, res) {
         error = "That username is already taken";
     }
 
+    if (req.query.e == "fields") {
+        error = "All fields are required";
+    }
+
     res.render('register', {title: 'Register', error: error});
 });
 
 router.post('/register', function(req, res) {
     var sess = req.session;
 
+    if (String.isEmpty(req.body.username) ||
+        String.isEmpty(req.body.email) ||
+        String.isEmpty(req.body.password)) {
+
+            res.redirect('/login/register?e=fields');
+            return;
+    }
+
     User.createUser(req.body.username, req.body.email, req.body.password,
-      function (err) {
-          if (err) {
-              if (err.code == 'ER_DUP_ENTRY') {
+        function (err) {
+            if (err) {
+                if (err.code == 'ER_DUP_ENTRY') {
                   //this username is already taken
                   res.redirect('/login/register?e=taken');
-              }
-          }
-      }
+                } else {
+                  res.status(500).send('Could not complete request');
+                  return;
+                }
+            }
+
+            res.redirect('/login');
+        }
     );
 });
 
