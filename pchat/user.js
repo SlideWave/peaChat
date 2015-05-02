@@ -93,7 +93,11 @@ User.findUserByName = function(userName, callback) {
                 return;
             }
 
-            callback(err, result[0]);
+            if (result.length > 0) {
+                callback(null, result[0]);
+            } else {
+                callback(null, null);
+            }
         }
     );
 }

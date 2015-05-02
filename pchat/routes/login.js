@@ -73,6 +73,11 @@ router.post('/', function(req, res) {
                   return;
               }
 
+              if (! result) {
+                  res.render('login', { title: 'Login', error: 'Login failed, try again' });
+                  return;
+              }
+
               var fullHash = User.calcPwHash(req.body.password, result.salt);
 
               if (fullHash == result.pwHash) {
