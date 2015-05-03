@@ -85,9 +85,20 @@
                             <a href="/chat/join"><i class="fa fa-sun-o fa-fw"></i> Join Chat Room</a>
                         </li>
                         <li class="nav-divider"></li>
+                        <% for (var i=0, len=openChats.length; i < len; i++) {
+                                var chat = openChats[i];
+
+                                var cls;
+                                if (chat.type == OpenChat.IM) {
+                                    cls = "fa fa-envelope-o fa-fw";
+                                } else {
+                                    cls = "fa fa-group fa-fw";
+                                }
+                        %>
                         <li>
-                            <a href="/today"><i class="fa fa-sun-o fa-fw"></i> Recent IM</a>
+                            <a href="/chat/<%= chat.conversationId%>"><i class="<%=cls%>"></i> <%= chat.title %></a>
                         </li>
+                        <% } %>
                         <li class="nav-divider"></li>
                         <li>
                             <a href="/login/out"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
@@ -104,7 +115,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><%= title %></h1>
+                    <h2 class="page-header"><%= title %></h1>
                 </div>
                 <!-- /.col-lg-12 -->
                 <% if (locals.error) { %>

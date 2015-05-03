@@ -4,10 +4,11 @@ var config = require('./config');
 var User = require('./user');
 var md5 = require('MD5');
 
-var OpenChat = function(conversationId, userId, title) {
+var OpenChat = function(conversationId, userId, title, type) {
     this.conversationId = conversationId;
     this.userId = userId;
     this.title = title;
+    this.type = type;
 }
 
 OpenChat.IM = 0;
@@ -23,7 +24,7 @@ OpenChat.mapOpenChatQuery = function(sql, params, callback) {
             return;
         }
 
-        var query = connection.query(sql, params,
+        connection.query(sql, params,
             function(err, results) {
                 if (err) {
                     connection.end();
@@ -36,11 +37,13 @@ OpenChat.mapOpenChatQuery = function(sql, params, callback) {
                     var result = results[i];
 
                     ret.push(
-                      new OpenChat(result.user_id, result.conversation_id,
-                        result.title));
+                      new OpenChat(result.conversation_id, result.user_id,
+                        result.title, result.type));
                 }
 
                 connection.end();
+
+                callback(null, ret);
             }
         );
     });

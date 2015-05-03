@@ -17,7 +17,7 @@ router.get('/:id', function(req, res) {
 
         res.render('chat',
             {   title: 'Chat',
-                userFirst: sess.userFirst,
+                username: sess.username,
                 messages: messages,
                 pageScript: 'chat.page.js',
                 session: sess });
