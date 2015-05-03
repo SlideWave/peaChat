@@ -83,11 +83,11 @@ ChatMessage.getRecentChatMessages = function(conversationId, callback) {
     );
 }
 
-ChatMessage.getNewChatMessagesSince = function(since, callback) {
+ChatMessage.getNewChatMessagesSince = function(chatId, since, callback) {
     ChatMessage.mapChatQuery(
         "SELECT * FROM chat " +
         "WHERE conversation_id = ? AND timestamp > ? ORDER BY timestamp ",
-        [since], callback
+        [chatId, since], callback
     );
 }
 

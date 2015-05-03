@@ -27,7 +27,8 @@ router.get('/:id', function(req, res) {
                     username: sess.username,
                     messages: messages,
                     pageScript: 'chat.page.js',
-                    session: sess
+                    session: sess,
+                    conversationId: info.conversationId
                 });
         });
     });
@@ -46,10 +47,12 @@ router.get('/im/new', function(req, res) {
     }
 
     res.render('newim',
-    {   title: 'Send a new Instant Message',
-        username: sess.username,
-        session: sess,
-        error: e});
+        {
+            title: 'Send a new Instant Message',
+            username: sess.username,
+            session: sess,
+            error: e
+        });
 });
 
 router.post('/im/new', function(req, res) {
@@ -114,20 +117,23 @@ router.get('/recent', function(req, res) {
     });
 });
 
-router.get('/since/:id', function(req, res) {
-    ChatMessage.getNewChatMessagesSince(req.params.id, function (err, messages) {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Could not complete request');
-            return;
-        }
+router.get('/since/:id/:timestamp', function(req, res) {
+    ChatMessage.getNewChatMessagesSince(req.params.id, req.params.timestamp,
+        function (err, messages) {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
 
-        //blank out the user's email
-        for (var i = 0, len=messages.length; i < len; i++) {
-            messages[i].user.email = null;
-        }
+            //blank out the user's private information
+            for (var i = 0, len=messages.length; i < len; i++) {
+                messages[i].user.email = null;
+                messages[i].user.salt = null;
+                messages[i].user.pwHash = null;
+            }
 
-        res.json(messages);
+            res.json(messages);
     });
 });
 
