@@ -126,5 +126,20 @@ OpenChat.createNewChat = function(conversationId, userId, title, type, callback)
     });
 }
 
+OpenChat.findChatInfo = function(userId, conversationId, callback) {
+    OpenChat.mapOpenChatQuery(
+        "SELECT * FROM open_chats " +
+        "WHERE user_id = ? AND conversation_id = ? ", [userId, conversationId],
+        function(err, info) {
+            if (err || !info) {
+                callback(err, info);
+                return;
+            }
+
+            callback(null, info[0]);
+        }
+    );
+}
+
 
 module.exports = OpenChat;

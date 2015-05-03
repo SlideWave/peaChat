@@ -8,20 +8,30 @@ var User = require('../user');
 router.get('/:id', function(req, res) {
     var sess = req.session;
 
-    ChatMessage.getRecentChatMessages(req.params.id, function (err, messages) {
-        if (err) {
-            console.error(err);
+    OpenChat.findChatInfo(sess.userId, req.params.id, function(err, info) {
+        if (err || !info) {
+            if (err) console.error(err);
             res.status(500).send('Could not complete request');
             return;
         }
 
-        res.render('chat',
-            {   title: 'Chat',
-                username: sess.username,
-                messages: messages,
-                pageScript: 'chat.page.js',
-                session: sess });
+        ChatMessage.getRecentChatMessages(req.params.id, function (err, messages) {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
+
+            res.render('chat',
+                {   title: info.title,
+                    username: sess.username,
+                    messages: messages,
+                    pageScript: 'chat.page.js',
+                    session: sess
+                });
+        });
     });
+
 });
 
 /**
