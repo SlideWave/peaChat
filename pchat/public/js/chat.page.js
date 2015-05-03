@@ -1,4 +1,5 @@
 var lastTimestamp = 0;
+var pollRate = 2000;
 
 function updateChatTimes() {
     //run though all the chat messages in the DOM and
@@ -41,7 +42,7 @@ function addToChatBox(messages) {
                 '<div class="chat-body clearfix">' +
                     '<div class="header">' +
                         '<strong class="' + strongClass + 'primary-font">' +
-                            msg.user.firstName + ' ' + msg.user.lastName +
+                            msg.user.username +
                         '</strong>' +
                         '<small class="' + smallClass + ' text-muted post-date">' +
                             '<i class="fa fa-clock-o fa-fw"></i><span data-date="' + localTimePostedOn + '">' + posted + '</span> ago' +
@@ -104,7 +105,7 @@ function chatRefresh() {
 
 function chatTimer() {
     chatRefresh();
-    setTimeout(chatTimer, 10000);
+    setTimeout(chatTimer, pollRate);
 }
 
 $(document).ready(function() {
@@ -139,5 +140,5 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
-    setTimeout(chatTimer, 10000);
+    setTimeout(chatTimer, pollRate);
 });
