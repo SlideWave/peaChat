@@ -73,13 +73,26 @@ User.resolveUsers = function(userList, callback) {
 
     User.mapUserQuery(
       'SELECT user_id, username, email, salt, pw_hash, profile_image ' +
-      'FROM users WHERE UUID IN (?);',
+      'FROM users WHERE user_id IN (?);',
       [userList], true, callback);
 }
 
 User.resolveUser = function(userId, callback) {
-    var userList = [userId];
-    User.resolveUsers(userList, true, callback);
+    User.mapUserQuery(
+      'SELECT user_id, username, email, salt, pw_hash, profile_image ' +
+      'FROM users WHERE user_id = ?;',
+      userId, false, function (err, result) {
+          if (err) {
+              callback(err, null);
+              return;
+          }
+
+          if (result.length > 0) {
+              callback(null, result[0]);
+          } else {
+              callback(null, null);
+          }
+    });
 }
 
 User.findUserByName = function(userName, callback) {

@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var ChatMessage = require('../chatmessage');
+var OpenChat = require('../openchat');
+var User = require('../user');
 
 /* GET the messages from a specific chat */
 router.get('/:id', function(req, res) {
@@ -28,10 +30,54 @@ router.get('/:id', function(req, res) {
 router.get('/im/new', function(req, res) {
     var sess = req.session;
 
+    var e = null;
+    if (req.query.e == "notfound") {
+        e = "Username not found";
+    }
+
     res.render('newim',
     {   title: 'Send a new Instant Message',
         username: sess.username,
-        session: sess });
+        session: sess,
+        error: e});
+});
+
+router.post('/im/new', function(req, res) {
+    var sess = req.session;
+
+    //look up both users involved
+    User.findUserByName(req.body.username, function(err, u1) {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Could not complete request');
+            return;
+        }
+
+        if (u1 == null) {
+            //we couldn't find the user
+            res.redirect('/chat/im/new?e=notfound');
+            return;
+        }
+
+        User.resolveUser(sess.userId, function (err, u2) {
+            if (err || u2 == null) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
+
+            OpenChat.startIM(u1, u2, function(err, chatId) {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Could not complete request');
+                    return;
+                }
+
+                res.redirect('/chat/' + chatId);
+            })
+        });
+
+    });
 });
 
 router.get('/recent', function(req, res) {

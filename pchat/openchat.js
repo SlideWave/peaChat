@@ -77,7 +77,7 @@ OpenChat.startIM = function(userA, userB, callback) {
     OpenChat.createNewChat(convId, userA.UUID, atitle, OpenChat.IM,
         function(err) {
             if (err && err.code != 'ER_DUP_ENTRY') { //we'll get dup if a user tries to start the same IM twice
-                callback(err);
+                callback(err, null);
                 return;
             }
 
@@ -89,7 +89,7 @@ OpenChat.startIM = function(userA, userB, callback) {
                     }
 
                     //success
-                    callback(null);
+                    callback(null, convId);
                 }
             );
         }
@@ -124,4 +124,4 @@ OpenChat.createNewChat = function(conversationId, userId, title, type, callback)
 }
 
 
-module.exports = ChatMessage;
+module.exports = OpenChat;
