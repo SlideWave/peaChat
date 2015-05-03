@@ -93,8 +93,8 @@ router.post('/im/new', function(req, res) {
     });
 });
 
-router.get('/recent', function(req, res) {
-    ChatMessage.getRecentChatMessages(function (err, messages) {
+router.get('/recent/:id', function(req, res) {
+    ChatMessage.getRecentChatMessages(req.params.id, function (err, messages) {
         if (err) {
             console.error(err);
             res.status(500).send('Could not complete request');
@@ -110,7 +110,9 @@ router.get('/recent', function(req, res) {
 
         //blank out the user's email
         for (var i = 0, len=reordered.length; i < len; i++) {
-            reordered[i].user.email = null;
+            messages[i].user.email = null;
+            messages[i].user.salt = null;
+            messages[i].user.pwHash = null;
         }
 
         res.json(reordered);
@@ -140,15 +142,19 @@ router.get('/since/:id/:timestamp', function(req, res) {
 router.post('/add', function(req, res) {
     var sess = req.session;
 
-    ChatMessage.postMessage(sess.userId, req.body.chatText, function (err) {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Could not complete request');
-            return;
-        }
+    console.info(req.body);
 
-        res.json({"status": "ok"});
-    });
+    ChatMessage.postMessage(req.body.conversationId, sess.userId, req.body.chatText,
+        function (err) {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
+
+            res.json({"status": "ok"});
+        }
+    );
 });
 
 module.exports = router;

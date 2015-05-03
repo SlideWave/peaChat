@@ -1,4 +1,4 @@
-var lastChatId = 0;
+var lastTimestamp = 0;
 
 function updateChatTimes() {
     //run though all the chat messages in the DOM and
@@ -29,7 +29,7 @@ function addToChatBox(messages) {
             strongClass = 'pull-right ';
         }
 
-        var localTimePostedOn = moment(msg.postedOn).zone(tzoff);
+        var localTimePostedOn = moment(msg.timestamp).zone(tzoff);
         var posted = moment.duration(localTimePostedOn.diff(moment())).humanize();
 
         $("ul.chat").append(
@@ -54,7 +54,7 @@ function addToChatBox(messages) {
             '</li>'
         );
 
-        lastChatId = msg.id;
+        lastTimestamp = msg.timestamp;
     }
 
     if (messages.length > 0) {
@@ -65,10 +65,12 @@ function addToChatBox(messages) {
 }
 
 function getChatSinceLastCheck() {
+    var cid = conversationId;
+
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: "/chat/since/" + lastChatId,
+        url: "/chat/since/" + cid + "/" + lastTimestamp,
         contentType: "application/json",
         success:
         function(data) {
@@ -80,13 +82,14 @@ function getChatSinceLastCheck() {
 function sendChat() {
     var text = $("#btn-input").val();
     $("#btn-input").val('');
+    var cid = conversationId;
 
     $.ajax({
         type: "POST",
         dataType: "json",
         url: "/chat/add",
         contentType: "application/json",
-        data: JSON.stringify({"chatText": text}),
+        data: JSON.stringify({"chatText": text, "conversationId": cid}),
         success:
         function(data) {
             getChatSinceLastCheck();
@@ -105,11 +108,13 @@ function chatTimer() {
 }
 
 $(document).ready(function() {
+    var cid = conversationId;
+
     //grab the most recent chat messages
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: "/chat/recent",
+        url: "/chat/recent/" + cid,
         contentType: "application/json",
         success:
         function(data) {

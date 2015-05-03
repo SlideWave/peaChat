@@ -66,7 +66,7 @@ ChatMessage.getRecentChatMessages = function(conversationId, callback) {
         "SELECT * FROM chat " +
         "WHERE conversation_id = ? " +
           "AND timestamp >= UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)) * 1000 " +
-        "ORDER BY timestamp ASC LIMIT 100", [conversationId], function(err, results) {
+        "ORDER BY timestamp DESC LIMIT 100", [conversationId], function(err, results) {
 
             if (err || results.length > 0) {
                 callback(err, results);
@@ -102,7 +102,7 @@ ChatMessage.postMessage = function(conversationId, userId, message, callback) {
         }
 
         var sql = "INSERT INTO chat(conversation_id, timestamp, user_id, message) " +
-                  "VALUES(?, ?, ?);";
+                  "VALUES(?, ?, ?, ?);";
 
         var timestamp = Date.now();
 
