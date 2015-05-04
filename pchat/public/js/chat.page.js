@@ -1,5 +1,5 @@
 var lastTimestamp = 0;
-var pollRate = 2000;
+var pollRate = 1000;
 
 function updateChatTimes() {
     //run though all the chat messages in the DOM and
@@ -71,7 +71,7 @@ function getChatSinceLastCheck() {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: "/chat/since/" + cid + "/" + lastTimestamp,
+        url: "/chat/since/" + cid + "/" + lastTimestamp +"?timestamp="+$.now(),
         contentType: "application/json",
         success:
         function(data) {
@@ -93,7 +93,6 @@ function sendChat() {
         data: JSON.stringify({"chatText": text, "conversationId": cid}),
         success:
         function(data) {
-            getChatSinceLastCheck();
         }
     });
 }
