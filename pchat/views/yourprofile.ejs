@@ -1,0 +1,25 @@
+<% include header %>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+              <form class="form-newim" role="form" method="post">
+                <label for="inputUsername" class="sr-only">Username</label>
+                <input name="username" type="text" id="inputUsername" class="form-control" placeholder="Username to contact" autocorrect="off" required autofocus>
+
+                <div>
+                    Upload your profile picture
+                </div>
+
+                <div id="image-submission" class="row">
+                    <div class="dropzone" id="submission-dropzone">
+
+                    </div>
+                </div>
+
+                <button class="btn btn-lg btn-primary btn-block" type="submit">OK</button>
+              </form>
+        </div><!-- /col -->
+    </div><!-- /row -->
+
+<% include footer %>
