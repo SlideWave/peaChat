@@ -8,11 +8,29 @@ var moment = require('moment');
 var User = require('../user');
 
 router.get('/', function(req, res) {
-    res.render('yourprofile', 
+    var sess = req.session;
+
+    res.render('yourprofile',
         {
-            title: 'Your Profile',
-            pageScript: "profile.page.js"
+            title: "Your profile",
+            username: sess.username,
+            pageScript: 'profile.page.js',
+            session: sess
         });
+});
+
+router.post('/', function(req, res) {
+    var sess = req.session;
+
+    User.updateProfileImage(sess.userId, req.body.imagefile, function(err) {
+        if (err) {
+            console.error(err);
+            res.status(500).send();
+            return;
+        }
+
+        res.redirect('/profile');
+    })
 });
 
 module.exports = router;

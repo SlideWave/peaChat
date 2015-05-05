@@ -33,11 +33,19 @@ function addToChatBox(messages) {
         var localTimePostedOn = moment(msg.timestamp).zone(tzoff);
         var posted = moment.duration(localTimePostedOn.diff(moment())).humanize();
 
+        var pimage;
+
+        if (msg.user.profileImage != null) {
+            pimage = msg.user.profileImage.slice(0, -4) + "-t.jpg";
+        } else {
+            pimage = "blank.jpg";
+        }
+
         $("ul.chat").append(
             '<li class="' + liClass + ' clearfix">' +
                 '<span class="chat-img ' + spanClass + '">' +
-                    '<img src="http://profileimg.inworldz.com/profileimg/?uid=' + msg.userId +
-                        '&type=image" alt="User Avatar" class="img-circle" style="width: 50px; height: 50px;" onerror="imgError(this);" />' +
+                    '<img src="' + pimage +
+                        '" alt="User Avatar" class="img-circle" style="width: 50px; height: 50px;" onerror="imgError(this);" />' +
                 '</span>' +
                 '<div class="chat-body clearfix">' +
                     '<div class="header">' +

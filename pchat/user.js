@@ -180,4 +180,30 @@ User.calcPwHash = function(password, salt) {
     return md5(password + ":" + salt);
 }
 
+User.updateProfileImage = function(userId, newImage) {
+    var connection = mysql.createConnection(config.siteDatabaseOptions);
+
+    connection.connect(function(err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            callback(err, null);
+            return;
+        }
+
+        var query = "UPDATE users SET profile_image = ? WHERE user_id = ?";
+
+        connection.query(query, [newImage, userId],
+            function (err, results) {
+                if (err) {
+                    console.error(err);
+                    callback(err);
+                    return;
+                }
+
+                callback(null);
+            }
+        );
+    });
+}
+
 module.exports = User;

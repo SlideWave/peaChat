@@ -1,4 +1,5 @@
 var express = require('express');
+var multer = require('multer');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -23,6 +24,16 @@ String.isEmpty = function(str) {
 }
 
 var app = express();
+
+app.use(
+    multer({
+        dest: './upload/',
+        limits: {
+            files: 1,
+            fileSize: 2097152
+        }
+    })
+);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -53,6 +64,7 @@ var routes = require('./routes/index');
 var login = require('./routes/login');
 var chat = require('./routes/chat');
 var profile = require('./routes/profile');
+var images = require('./routes/images');
 
 //precatch any request coming in for any page
 //and force to the login page if the user does
@@ -100,6 +112,7 @@ app.use('/', routes);
 app.use('/login', login);
 app.use('/chat', chat);
 app.use('/profile', profile);
+app.use('/images', images);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
