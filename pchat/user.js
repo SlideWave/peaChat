@@ -180,7 +180,7 @@ User.calcPwHash = function(password, salt) {
     return md5(password + ":" + salt);
 }
 
-User.updateProfileImage = function(userId, newImage) {
+User.updateProfileImage = function(userId, newImage, callback) {
     var connection = mysql.createConnection(config.siteDatabaseOptions);
 
     connection.connect(function(err) {

@@ -45,7 +45,7 @@ function addToChatBox(messages) {
             '<li class="' + liClass + ' clearfix">' +
                 '<span class="chat-img ' + spanClass + '">' +
                     '<img src="' + pimage +
-                        '" alt="User Avatar" class="img-circle" style="width: 50px; height: 50px;" onerror="imgError(this);" />' +
+                        '" alt="User Avatar" class="img-circle" style="width: 50px; height: 50px;" />' +
                 '</span>' +
                 '<div class="chat-body clearfix">' +
                     '<div class="header">' +
