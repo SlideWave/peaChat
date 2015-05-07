@@ -93,6 +93,37 @@ router.post('/im/new', function(req, res) {
     });
 });
 
+/**
+ * Displays a screen where a user can enter a chat room
+ */
+router.get('/room/join', function(req, res) {
+    var sess = req.session;
+
+    res.render('joinroom',
+        {
+            title: 'Join a chat room',
+            username: sess.username,
+            session: sess
+        });
+});
+
+/**
+ * Places the user in this session into the requested room
+ */
+router.post('/room/join', function(req, res) {
+    var sess = req.session;
+
+    OpenChat.joinRoom(req.body.roomname, sess.userId, function(err, conversationId) {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Could not complete request');
+            return;
+        }
+
+        res.redirect('/chat/' + conversationId);
+    });
+});
+
 router.get('/recent/:id', function(req, res) {
     ChatMessage.getRecentChatMessages(req.params.id, function (err, messages) {
         if (err) {
@@ -141,8 +172,6 @@ router.get('/since/:id/:timestamp', function(req, res) {
 
 router.post('/add', function(req, res) {
     var sess = req.session;
-
-    console.info(req.body);
 
     ChatMessage.postMessage(req.body.conversationId, sess.userId, req.body.chatText,
         function (err) {

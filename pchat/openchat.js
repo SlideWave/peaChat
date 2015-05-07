@@ -141,5 +141,27 @@ OpenChat.findChatInfo = function(userId, conversationId, callback) {
     );
 }
 
+/**
+ * Adds the given user to a chat room
+ */
+OpenChat.joinRoom = function(roomName, userId, callback) {
+    //hash as: md5(roomName)
+    var convId = md5(roomName);
+    var atitle = roomName;
+
+    //create the new chat for the user
+    OpenChat.createNewChat(convId, userId, atitle, OpenChat.CHATROOM,
+        function(err) {
+            if (err && err.code != 'ER_DUP_ENTRY') { //we'll get dup if a user tries to start the same room twice
+                callback(err, null);
+                return;
+            }
+
+            //success
+            callback(null, convId);
+        }
+    );
+}
+
 
 module.exports = OpenChat;
