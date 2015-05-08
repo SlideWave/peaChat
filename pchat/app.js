@@ -1,5 +1,16 @@
+/**
+ * if the user passed in a setup param to us, execute setup
+ */
 if (process.argv.length > 2 && process.argv[2] == "setup") {
-    
+    require('./setup').init(function (err) {
+        if (err) {
+            process.exit(1);
+        } else {
+            process.exit(0);
+        }
+    });
+
+    return;
 }
 
 var express = require('express');
