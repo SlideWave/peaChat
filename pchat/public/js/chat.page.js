@@ -21,7 +21,7 @@ function doNewMessageAlert() {
     var msg = "New Message";
     var timeoutId;
     var blink = function() { document.title = document.title == msg ? title : msg; };
-    if (! timeoutId && !focused) {
+    if (!alertTimeoutId && !focused) {
         alertTimeoutId = setInterval(blink, 1000);
     }
 }
