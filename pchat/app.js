@@ -1,3 +1,7 @@
+if (process.argv.length > 2 && process.argv[2] == "setup") {
+    
+}
+
 var express = require('express');
 var multer = require('multer');
 var path = require('path');
