@@ -25,11 +25,22 @@ if (cluster.isMaster) {
 
     var debug = require('debug')('idrather');
     var app = require('../app');
+    var config = require('../config');
+
+    var fs = require('fs'),
+        http = require('http'),
+        https = require('https');
 
     app.set('port', process.env.PORT || 3000);
 
-    var server = app.listen(app.get('port'), function() {
-      debug('Express server listening on port ' + server.address().port);
-    });
+    if (config.httpsOptions == null) {
+        var server = app.listen(app.get('port'), function() {
+          debug('Express server listening on port ' + server.address().port);
+        });
+    } else {
+        var server = https.createServer(config.httpsOptions, app).listen(app.get('port'), function(){
+          console.log("Express server listening on port " + server.address().port);
+        });
+    }
 
 }
