@@ -42,7 +42,7 @@ var app = express();
 
 app.use(
     multer({
-        dest: './upload/',
+        dest: config.uploadDir,
         limits: {
             files: 1,
             fileSize: 2097152

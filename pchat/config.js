@@ -17,4 +17,6 @@ config.httpsOptions = {
     cert: fs.readFileSync('/Users/ddaeschler/Desktop/pchat.slidewave.com.cert'),
 };
 
+config.uploadDir = './upload/';
+
 module.exports = config;
