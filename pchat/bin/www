@@ -1,9 +1,35 @@
 #!/usr/bin/env node
-var debug = require('debug')('pchat');
-var app = require('../app');
+var cluster = require('cluster');
 
-app.set('port', process.env.PORT || 3000);
+if (cluster.isMaster) {
+    // Count the machine's CPUs
+    var cpuCount = require('os').cpus().length;
 
-var server = app.listen(app.get('port'), function() {
-  debug('Express server listening on port ' + server.address().port);
-});
+    console.log('Cluster CPU count: ' + cpuCount);
+
+    // Create a worker for each CPU
+    for (var i = 0; i < cpuCount; i += 1) {
+        cluster.fork();
+    }
+
+    // Listen for dying workers
+    cluster.on('exit', function (worker) {
+
+        // Replace the dead worker, we're not sentimental
+        console.log('Worker ' + worker.id + ' died :(');
+        cluster.fork();
+
+    });
+
+} else {
+
+    var debug = require('debug')('idrather');
+    var app = require('../app');
+
+    app.set('port', process.env.PORT || 3000);
+
+    var server = app.listen(app.get('port'), function() {
+      debug('Express server listening on port ' + server.address().port);
+    });
+
+}
