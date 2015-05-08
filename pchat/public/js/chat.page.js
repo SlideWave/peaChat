@@ -7,6 +7,7 @@ var title = document.title;
 window.onfocus = function () {
     if (alertTimeoutId != null) {
         clearInterval(alertTimeoutId);
+        alertTimeoutId = null;
     }
 
     document.title = title;
