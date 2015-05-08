@@ -38,7 +38,7 @@ function addToChatBox(messages) {
         if (msg.user.profileImage != null) {
             pimage = msg.user.profileImage.slice(0, -4) + "-t.jpg";
         } else {
-            pimage = "blank.png";
+            pimage = "/images/blank.png";
         }
 
         $("ul.chat").append(
