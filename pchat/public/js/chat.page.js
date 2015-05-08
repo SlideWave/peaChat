@@ -1,5 +1,30 @@
 var lastTimestamp = 0;
 var pollRate = 1000;
+var alertTimeoutId = null;
+var focused = true;
+var title = document.title;
+
+window.onfocus = function () {
+    if (alertTimeoutId != null) {
+        clearInterval(alertTimeoutId);
+    }
+
+    document.title = title;
+    focused = true;
+}
+
+window.onblur = function() {
+    focused = false;
+}
+
+function doNewMessageAlert() {
+    var msg = "New Message";
+    var timeoutId;
+    var blink = function() { document.title = document.title == msg ? title : msg; };
+    if (! timeoutId && !focused) {
+        alertTimeoutId = setInterval(blink, 1000);
+    }
+}
 
 function updateChatTimes() {
     //run though all the chat messages in the DOM and
@@ -69,6 +94,8 @@ function addToChatBox(messages) {
     if (messages.length > 0) {
         //something was added, scroll to the bottom
         document.getElementById('chat-body').scrollTop = 10000;
+        //also alert
+        doNewMessageAlert();
     }
 
 }
