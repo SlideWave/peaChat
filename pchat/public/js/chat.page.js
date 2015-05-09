@@ -265,6 +265,7 @@ $(document).ready(function() {
 
     $("#media-cancel").click(function(e) {
         $("#imagefile").val('');
+        submissionDropzone.removeAllFiles();
     });
 
     $("#media-send").click(function(e) {
@@ -272,7 +273,7 @@ $(document).ready(function() {
         $("#imagefile").val('');
 
         submissionDropzone.removeAllFiles();
-        
+
         $.ajax({
             type: "POST",
             dataType: "json",
