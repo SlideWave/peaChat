@@ -186,4 +186,21 @@ router.post('/add', function(req, res) {
     );
 });
 
+router.post('/leave', function(req, res) {
+    var sess = req.session;
+
+    OpenChat.leaveChat(req.body.conversationId, sess.userId,
+        function (err) {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
+
+            res.json({"status": "ok"});
+        }
+    );
+});
+
+
 module.exports = router;

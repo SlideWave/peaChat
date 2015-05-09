@@ -143,6 +143,22 @@ function chatTimer() {
     setTimeout(chatTimer, pollRate);
 }
 
+function leaveChat() {
+    var cid = conversationId;
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: "/chat/leave",
+        contentType: "application/json",
+        data: JSON.stringify({"conversationId": cid}),
+        success:
+        function(data) {
+            window.location = "/";
+        }
+    });
+}
+
 $(document).ready(function() {
     var cid = conversationId;
 
@@ -172,6 +188,11 @@ $(document).ready(function() {
 
     $("#chat-refresh").click(function (e) {
         chatRefresh();
+        e.preventDefault();
+    });
+
+    $("#chat-leave").click(function (e) {
+        leaveChat();
         e.preventDefault();
     });
 

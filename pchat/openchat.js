@@ -163,5 +163,34 @@ OpenChat.joinRoom = function(roomName, userId, callback) {
     );
 }
 
+/**
+ * Removes the given user from a chat
+ */
+OpenChat.leaveChat = function(conversationId, userId, callback) {
+    var connection = mysql.createConnection(config.siteDatabaseOptions);
+
+    connection.connect(function(err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            callback(err);
+            return;
+        }
+
+        var sql = "DELETE FROM open_chats WHERE user_id = ? AND conversation_id = ?;";
+
+        connection.query(sql, [userId, conversationId],
+            function(err, results) {
+                if (err) {
+                    connection.end();
+                    callback(err);
+                    return;
+                }
+
+                callback(null);
+                connection.end();
+        });
+    });
+}
+
 
 module.exports = OpenChat;
