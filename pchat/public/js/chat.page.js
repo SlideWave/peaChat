@@ -3,6 +3,7 @@ var pollRate = 1000;
 var alertTimeoutId = null;
 var focused = true;
 var title = document.title;
+var maxDisplayed = 100;
 
 window.onfocus = function () {
     if (alertTimeoutId != null) {
@@ -36,6 +37,26 @@ function updateChatTimes() {
 
         $(elem).html(posted);
     });
+}
+
+function pruneOldMessages() {
+    //run though all the chat messages in the DOM and
+    //prune old messages that are at the top
+    var len = $(".chatmessage").length;
+    var toRemove = len - maxDisplayed;
+
+    if (toRemove > 0) {
+        $(".chatmessage").each(function(index, elem) {
+            if (toRemove-- > 0) {
+                elem.remove();
+                return true;
+            } else {
+                return false;
+            }
+        });
+    }
+
+
 }
 
 function showProfileImage(image) {
@@ -75,7 +96,7 @@ function addToChatBox(messages) {
         var id = conversationId + msg.timestamp.toString() + msg.userId;
 
         $("ul.chat").append(
-            '<li class="' + liClass + ' clearfix" id="' + id + '">' +
+            '<li class="' + liClass + ' clearfix chatmessage" id="' + id + '">' +
                 '<span class="chat-img ' + spanClass + '">' +
                     '<a href="#">' +
                         '<img src="' + pimage +
@@ -114,7 +135,7 @@ function addToChatBox(messages) {
 
     if (messages.length > 0) {
         //something was added, scroll to the bottom
-        document.getElementById('chat-body').scrollTop = 10000;
+        document.getElementById('chat-body').scrollTop = 99999;
         //also alert
         doNewMessageAlert();
     }
@@ -155,6 +176,7 @@ function sendChat() {
 
 function chatRefresh() {
     getChatSinceLastCheck();
+    pruneOldMessages();
     updateChatTimes();
 }
 
