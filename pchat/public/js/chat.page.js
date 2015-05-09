@@ -72,7 +72,7 @@ function addToChatBox(messages) {
             pimage = "/images/blank.png";
         }
 
-        var id = msg.conversationId + msg.timestamp + msg.userId;
+        var id = conversationId + msg.timestamp.toString() + msg.userId;
 
         $("ul.chat").append(
             '<li class="' + liClass + ' clearfix" id="' + id + '">' +
