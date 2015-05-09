@@ -38,6 +38,11 @@ function updateChatTimes() {
     });
 }
 
+function showProfileImage(image) {
+    bootbox.alert("<img src='" + image + "' style='width: 100%'>", function() {
+    });
+}
+
 function addToChatBox(messages) {
     var tzoff = new Date().getTimezoneOffset();
 
@@ -67,11 +72,15 @@ function addToChatBox(messages) {
             pimage = "/images/blank.png";
         }
 
+        var id = msg.conversationId + msg.timestamp + msg.userId;
+
         $("ul.chat").append(
-            '<li class="' + liClass + ' clearfix">' +
+            '<li class="' + liClass + ' clearfix" id="' + id + '">' +
                 '<span class="chat-img ' + spanClass + '">' +
-                    '<img src="' + pimage +
-                        '" alt="User Avatar" class="img-circle" style="width: 50px; height: 50px;" />' +
+                    '<a href="#">' +
+                        '<img src="' + pimage +
+                            '" alt="User Avatar" class="img-circle" style="width: 50px; height: 50px;" />' +
+                    '</a>' +
                 '</span>' +
                 '<div class="chat-body clearfix">' +
                     '<div class="header">' +
@@ -88,6 +97,17 @@ function addToChatBox(messages) {
                 '</div>' +
             '</li>'
         );
+
+        (function (pimage) {
+            $("#" + id + " > span > a").click(function (evt) {
+                if (pimage != null) {
+                    showProfileImage(pimage);
+                }
+                evt.preventDefault();
+            });
+        })(msg.user.profileImage);
+
+
 
         lastTimestamp = msg.timestamp;
     }
