@@ -8,7 +8,8 @@ CREATE TABLE `chat` (
   `timestamp` bigint(20) unsigned NOT NULL,
   `user_id` char(36) NOT NULL,
   `message` text,
-  PRIMARY KEY (`conversation_id`, `timestamp`)
+  `media` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`conversation_id`,`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
