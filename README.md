@@ -11,6 +11,8 @@ Layout created with bootstrap.
 
 Live demo at https://pchat.slidewave.com
 
+![Screenshot](/screenshot.png?raw=true)
+
 ## Typical setup:
 
 * Have a MySQL instance handy
