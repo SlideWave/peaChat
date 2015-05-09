@@ -1,7 +1,13 @@
 # pchat
 Responsive, privately hostable chat and IM software on node.js and mysql
 
-Supports both instant messaging and chat rooms. Layout created with bootstrap.
+* Private instant messaging 
+* Group chat rooms
+* Profile images
+* Image uploads / inline media in chats
+* Full sized image views on click
+
+Layout created with bootstrap.
 
 Live demo at https://pchat.slidewave.com
 
@@ -13,3 +19,9 @@ Live demo at https://pchat.slidewave.com
 and if necessary the full local path to the upload directory (required when using certain init scripts)
 * Run node app.js setup to initialize the database
 * Start the app using an init script or "node bin/www"
+
+## Plans:
+
+* CDN Image support
+* Better notification of incoming messages from chats you are not monitoring
+* Minor fixes to the mobile layout especially on the image upload modals
