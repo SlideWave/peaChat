@@ -48,19 +48,14 @@ router.post('/upload', function(req, res) {
                     return;
                 }
 
-                console.info(inFile.path);
-
                 var baseName = path.basename(inFile.path, path.extname(inFile.path));
                 var profilesDir
                     = path.normalize(
-                        path.dirname(inFile.path) + '/../public/images/profiles'
+                        path.dirname(inFile.path) + '/../public/images/media'
                     );
 
                 var bigName = path.join(profilesDir, baseName + ".jpg");
                 var thumbName = path.join(profilesDir, baseName + "-t.jpg");
-
-                console.info(bigName);
-                console.info(thumbName);
 
                 //save to the profiles directory
                 timage.writeFile(thumbName, function(err) {
@@ -78,8 +73,8 @@ router.post('/upload', function(req, res) {
                         }
 
                         var ret = {
-                            img: '/images/profiles/' + baseName + ".jpg",
-                            thumb: '/images/profiles/' + baseName + "-t.jpg"
+                            img: '/images/media/' + baseName + ".jpg",
+                            thumb: '/images/media/' + baseName + "-t.jpg"
                         };
 
                         res.json(ret);

@@ -3,11 +3,12 @@ var session = require('express-session');
 var config = require('./config');
 var User = require('./user');
 
-var ChatMessage = function(conversationId, timestamp, userId, message) {
+var ChatMessage = function(conversationId, timestamp, userId, message, media) {
     this.conversationId = conversationId;
     this.timestamp = timestamp;
     this.userId = userId;
     this.message = message;
+    this.media = media;
 
     this.user = null;
 }
@@ -36,7 +37,7 @@ ChatMessage.mapChatQuery = function(sql, params, callback) {
 
                     ret.push(
                       new ChatMessage(result.chat_id, result.timestamp,
-                        result.user_id, result.message));
+                        result.user_id, result.message, result.media));
                 }
 
                 connection.end();
@@ -107,6 +108,36 @@ ChatMessage.postMessage = function(conversationId, userId, message, callback) {
         var timestamp = Date.now();
 
         var query = connection.query(sql, [conversationId, timestamp, userId, message],
+            function(err, results) {
+                if (err) {
+                    connection.end();
+                    console.error('error querying: ' + err.stack);
+                    callback(err);
+                    return;
+                }
+
+                callback(null);
+                connection.end();
+        });
+    });
+}
+
+ChatMessage.postMedia = function(conversationId, userId, media, callback) {
+    var connection = mysql.createConnection(config.siteDatabaseOptions);
+
+    connection.connect(function(err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            callback(err);
+            return;
+        }
+
+        var sql = "INSERT INTO chat(conversation_id, timestamp, user_id, media) " +
+                  "VALUES(?, ?, ?, ?);";
+
+        var timestamp = Date.now();
+
+        var query = connection.query(sql, [conversationId, timestamp, userId, media],
             function(err, results) {
                 if (err) {
                     connection.end();

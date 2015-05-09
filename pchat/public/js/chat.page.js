@@ -64,6 +64,11 @@ function showProfileImage(image) {
     });
 }
 
+function showMediaImage(image) {
+    bootbox.alert("<img src='" + image + "' style='width: 100%'>", function() {
+    });
+}
+
 function addToChatBox(messages) {
     var tzoff = new Date().getTimezoneOffset();
 
@@ -95,6 +100,14 @@ function addToChatBox(messages) {
 
         var id = conversationId + msg.timestamp.toString() + msg.userId;
 
+        var body;
+        if (msg.media != null) {
+            var mimage = msg.media.slice(0, -4) + "-t.jpg";
+            body = '<a href="#" class="media"><img src="' + mimage + '"></a>';
+        } else {
+            body = '<p>' + html_sanitize(msg.message) + '</p>';
+        }
+
         $("ul.chat").append(
             '<li class="' + liClass + ' clearfix chatmessage" id="' + id + '">' +
                 '<span class="chat-img ' + spanClass + '">' +
@@ -112,15 +125,13 @@ function addToChatBox(messages) {
                             '<i class="fa fa-clock-o fa-fw"></i><span data-date="' + localTimePostedOn + '">' + posted + '</span> ago' +
                         '</small>' +
                     '</div>' +
-                    '<p>' +
-                        html_sanitize(msg.message) +
-                    '</p>' +
+                        body +
                 '</div>' +
             '</li>'
         );
 
         (function (pimage) {
-            $("#" + id + " > span > a").click(function (evt) {
+            $("#" + id + " > span.chat-img > a").click(function (evt) {
                 if (pimage != null) {
                     showProfileImage(pimage);
                 }
@@ -128,6 +139,16 @@ function addToChatBox(messages) {
             });
         })(msg.user.profileImage);
 
+        if (msg.media) {
+            (function (mimage) {
+                $("#" + id + " > div.chat-body > a.media").click(function (evt) {
+                    if (pimage != null) {
+                        showMediaImage(mimage);
+                    }
+                    evt.preventDefault();
+                });
+            })(msg.media);
+        }
 
 
         lastTimestamp = msg.timestamp;
@@ -236,6 +257,30 @@ $(document).ready(function() {
     $("#chat-leave").click(function (e) {
         leaveChat();
         e.preventDefault();
+    });
+
+    $("#btn-media").click(function(e) {
+        $("#addMediaModal").modal();
+    });
+
+    $("#media-cancel").click(function(e) {
+        $("#imagefile").val('');
+    });
+
+    $("#media-send").click(function(e) {
+        var file = $("#imagefile").val();
+        $("#imagefile").val('');
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/chat/add",
+            contentType: "application/json",
+            data: JSON.stringify({"media": file, "conversationId": cid}),
+            success:
+            function(data) {
+            }
+        });
     });
 
     setTimeout(chatTimer, pollRate);

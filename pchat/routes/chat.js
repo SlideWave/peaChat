@@ -26,7 +26,7 @@ router.get('/:id', function(req, res) {
                 {   title: info.title,
                     username: sess.username,
                     messages: messages,
-                    pageScript: 'chat.page.js',
+                    pageScript: ['chat.page.js', 'dropzone.page.js'],
                     session: sess,
                     conversationId: info.conversationId
                 });
@@ -173,17 +173,35 @@ router.get('/since/:id/:timestamp', function(req, res) {
 router.post('/add', function(req, res) {
     var sess = req.session;
 
-    ChatMessage.postMessage(req.body.conversationId, sess.userId, req.body.chatText,
-        function (err) {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Could not complete request');
-                return;
-            }
+    if (req.body.chatText) {
+        ChatMessage.postMessage(req.body.conversationId, sess.userId, req.body.chatText,
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Could not complete request');
+                    return;
+                }
 
-            res.json({"status": "ok"});
-        }
-    );
+                res.json({"status": "ok"});
+            }
+        );
+    } else if (req.body.media) {
+        ChatMessage.postMedia(req.body.conversationId, sess.userId, req.body.media,
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Could not complete request');
+                    return;
+                }
+
+                res.json({"status": "ok"});
+            }
+        );
+    } else {
+        res.status(400).send('Could not complete request');
+        return;
+    }
+
 });
 
 router.post('/leave', function(req, res) {

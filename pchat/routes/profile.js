@@ -14,7 +14,7 @@ router.get('/', function(req, res) {
         {
             title: "Your profile",
             username: sess.username,
-            pageScript: 'profile.page.js',
+            pageScript: 'dropzone.page.js',
             session: sess
         });
 });

@@ -2,6 +2,30 @@
     var conversationId = '<%= conversationId %>';
 </script>
 
+<div class="modal fade" id="addMediaModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="modalEventName">Upload image</h4>
+            </div>
+            <div class="modal-body">
+                <div id="image-submission" class="row">
+                    <div class="dropzone" id="submission-dropzone">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <input id="imagefile" type="hidden">
+                <button id="media-cancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="media-send" type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <!-- /.col-lg-8 -->
     <div class="col-lg-12">
@@ -34,6 +58,11 @@
             <!-- /.panel-body -->
             <div class="panel-footer">
                 <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-warning btn-sm" id="btn-media">
+                            <i class="fa fa-file-image-o fa-fw"></i>
+                        </button>
+                    </span>
                     <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
                     <span class="input-group-btn">
                         <button class="btn btn-warning btn-sm" id="btn-chat">
