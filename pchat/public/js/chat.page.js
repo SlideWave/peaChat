@@ -271,6 +271,8 @@ $(document).ready(function() {
         var file = $("#imagefile").val();
         $("#imagefile").val('');
 
+        submissionDropzone.removeAllFiles();
+        
         $.ajax({
             type: "POST",
             dataType: "json",
