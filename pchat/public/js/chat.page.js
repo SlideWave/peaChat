@@ -180,6 +180,8 @@ function getChatSinceLastCheck() {
 
 function sendChat() {
     var text = $("#btn-input").val();
+    if (text.trim() == '') return;
+
     $("#btn-input").val('');
     var cid = conversationId;
 
@@ -272,7 +274,7 @@ $(document).ready(function() {
         $("#imagefile").val('');
 
         submissionDropzone.removeAllFiles();
-        
+
         $.ajax({
             type: "POST",
             dataType: "json",
