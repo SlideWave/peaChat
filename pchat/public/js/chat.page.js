@@ -267,6 +267,7 @@ $(document).ready(function() {
 
     $("#media-cancel").click(function(e) {
         $("#imagefile").val('');
+        submissionDropzone.removeAllFiles();
     });
 
     $("#media-send").click(function(e) {

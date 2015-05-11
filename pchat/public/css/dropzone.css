@@ -47,8 +47,8 @@
 }
 .dropzone .dz-preview .dz-details,
 .dropzone-previews .dz-preview .dz-details {
-    width: 350px;
-    height: 350px;
+    width: 250px;
+    height: 250px;
     position: relative;
     background: #ebebeb;
     padding: 5px;
@@ -64,8 +64,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 350px;
-    height: 350px;
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
 }
 .dropzone .dz-preview .dz-details .dz-size,
 .dropzone-previews .dz-preview .dz-details .dz-size {

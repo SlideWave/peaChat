@@ -4,17 +4,20 @@ var submissionDropzone;
 
 Dropzone.options.submissionDropzone = {
     url: "/images/upload",
-    maxFilesize: 2,
+    maxFilesize: 3,
     paramName: "uploadfile",
-    maxThumbnailFilesize: 2,
+    maxThumbnailFilesize: 3,
     clickable: true,
     maxFiles: 1,
     acceptedFiles: "image/jpeg,image/png",
-    thumbnailWidth: 350,
+    thumbnailWidth: 250,
 
     resize: function(file) {
-        var ratio = 350 / file.width;
+        var ratio = 250 / file.width;
         var imgHeight = file.height * ratio;
+        if (imgHeight > 250) {
+            imgHeight = 250; //constrain
+        }
 
         var resizeInfo = {
             srcX: 0,
