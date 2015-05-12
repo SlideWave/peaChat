@@ -224,6 +224,14 @@ function leaveChat() {
     });
 }
 
+function chatClear() {
+    //run though all the chat messages in the DOM and
+    //remove them all
+    $(".chatmessage").each(function(index, elem) {
+        elem.remove();
+    });
+}
+
 $(document).ready(function() {
     var cid = conversationId;
 
@@ -249,6 +257,11 @@ $(document).ready(function() {
             sendChat();
             return false;
         }
+    });
+
+    $("#chat-clear").click(function (e) {
+        chatClear();
+        e.preventDefault();
     });
 
     $("#chat-refresh").click(function (e) {
