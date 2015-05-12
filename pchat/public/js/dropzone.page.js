@@ -40,6 +40,8 @@ Dropzone.options.submissionDropzone = {
 
         this.on('success', function(file, json) {
             $("#imagefile").val(json.img);
+
+            this.emit("thumbnail", file, json.thumb);
         });
 
         this.on('error', function(file, errorMessage, xhr) {
