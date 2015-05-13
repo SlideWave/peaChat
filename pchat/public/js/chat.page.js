@@ -163,7 +163,7 @@ function addToChatBox(messages) {
 
 }
 
-function getChatSinceLastCheck() {
+function getChatSinceLastCheck(completedCallback) {
     var cid = conversationId;
 
     $.ajax({
@@ -171,10 +171,16 @@ function getChatSinceLastCheck() {
         dataType: "json",
         url: "/chat/since/" + cid + "/" + lastTimestamp +"?timestamp="+$.now(),
         contentType: "application/json",
+
         success:
-        function(data) {
-            addToChatBox(data);
-        }
+            function(data) {
+                addToChatBox(data);
+            },
+
+        complete:
+            function(xhr, status) {
+                completedCallback();
+            }
     });
 }
 
@@ -197,15 +203,19 @@ function sendChat() {
     });
 }
 
-function chatRefresh() {
-    getChatSinceLastCheck();
-    pruneOldMessages();
-    updateChatTimes();
+function chatRefresh(callback) {
+    getChatSinceLastCheck(function() {
+        pruneOldMessages();
+        updateChatTimes();
+
+        callback();
+    });
 }
 
 function chatTimer() {
-    chatRefresh();
-    setTimeout(chatTimer, pollRate);
+    chatRefresh(function() {
+        setTimeout(chatTimer, pollRate);
+    });
 }
 
 function leaveChat() {
@@ -261,11 +271,6 @@ $(document).ready(function() {
 
     $("#chat-clear").click(function (e) {
         chatClear();
-        e.preventDefault();
-    });
-
-    $("#chat-refresh").click(function (e) {
-        chatRefresh();
         e.preventDefault();
     });
 
