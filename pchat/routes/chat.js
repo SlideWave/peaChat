@@ -172,6 +172,24 @@ router.get('/since/:id/:timestamp', function(req, res) {
 
 router.post('/add', function(req, res) {
     var sess = req.session;
+    var cleanupChance = 10; //1 in X chance a cleanup will run
+
+    var cleanupRoutine = function() {
+        if (Math.floor((Math.random() * 10) + 1) == cleanupChance) {
+            ChatMessage.clearExpiredData(req.body.conversationId, function(err) {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Could not complete request');
+                    return;
+                }
+
+                res.json({"status": "ok"});
+            });
+
+        } else {
+            res.json({"status": "ok"});
+        }
+    }
 
     if (req.body.chatText) {
         ChatMessage.postMessage(req.body.conversationId, sess.userId, req.body.chatText,
@@ -182,7 +200,7 @@ router.post('/add', function(req, res) {
                     return;
                 }
 
-                res.json({"status": "ok"});
+                cleanupRoutine();
             }
         );
     } else if (req.body.media) {
@@ -194,7 +212,7 @@ router.post('/add', function(req, res) {
                     return;
                 }
 
-                res.json({"status": "ok"});
+                cleanupRoutine();
             }
         );
     } else {

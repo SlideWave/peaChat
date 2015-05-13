@@ -13,6 +13,8 @@ var ChatMessage = function(conversationId, timestamp, userId, message, media) {
     this.user = null;
 }
 
+ChatMessage.retentionDays = 1;
+
 ChatMessage.mapChatQuery = function(sql, params, callback) {
     var connection = mysql.createConnection(config.siteDatabaseOptions);
 
@@ -66,8 +68,9 @@ ChatMessage.getRecentChatMessages = function(conversationId, callback) {
     ChatMessage.mapChatQuery(
         "SELECT * FROM chat " +
         "WHERE conversation_id = ? " +
-          "AND timestamp >= UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)) * 1000 " +
-        "ORDER BY timestamp DESC LIMIT 100", [conversationId], function(err, results) {
+          "AND timestamp >= UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? DAY)) * 1000 " +
+        "ORDER BY timestamp DESC LIMIT 100", [conversationId, ChatMessage.retentionDays],
+        function(err, results) {
 
             if (err || results.length > 0) {
                 callback(err, results);
@@ -138,6 +141,37 @@ ChatMessage.postMedia = function(conversationId, userId, media, callback) {
         var timestamp = Date.now();
 
         var query = connection.query(sql, [conversationId, timestamp, userId, media],
+            function(err, results) {
+                if (err) {
+                    connection.end();
+                    console.error('error querying: ' + err.stack);
+                    callback(err);
+                    return;
+                }
+
+                callback(null);
+                connection.end();
+        });
+    });
+}
+
+/**
+ * Removes messages from a chat that are older than the retention period
+ */
+ChatMessage.clearExpiredData = function(conversationId, callback) {
+    var connection = mysql.createConnection(config.siteDatabaseOptions);
+
+    connection.connect(function(err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            callback(err);
+            return;
+        }
+
+        var sql = "DELETE FROM chat WHERE conversation_id = ? " +
+                    "AND timestamp < UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? DAY)) * 1000";
+
+        connection.query(sql, [conversationId, ChatMessage.retentionDays],
             function(err, results) {
                 if (err) {
                     connection.end();
