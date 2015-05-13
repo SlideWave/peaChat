@@ -171,7 +171,7 @@ function getChatSinceLastCheck(completedCallback) {
         dataType: "json",
         url: "/chat/since/" + cid + "/" + lastTimestamp +"?timestamp="+$.now(),
         contentType: "application/json",
-
+        timeout: 10000,
         success:
             function(data) {
                 addToChatBox(data);
