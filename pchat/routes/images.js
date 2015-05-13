@@ -29,15 +29,12 @@ router.post('/upload', function(req, res) {
     new ExifImage({image : inFile.path}, function (error, exifData) {
         var rotFlag = 0;
         if (! error) {
-            console.info(exifData);
             if (exifData && exifData.image && exifData.image.Orientation) {
                 rotFlag = exifData.image.Orientation;
             }
         } else {
             console.error(error);
         }
-
-        console.info(rotFlag);
 
         //resize the image and also create a thumbnail
         lwip.open(inFile.path, function(err, original) {
@@ -62,7 +59,6 @@ router.post('/upload', function(req, res) {
 
                 func = function(callback)
                 {
-                    console.info(rotDeg);
                     original.rotate(rotDeg, callback);
                 }
             }
