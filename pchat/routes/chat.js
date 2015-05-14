@@ -175,7 +175,7 @@ router.post('/add', function(req, res) {
     var cleanupChance = 10; //1 in X chance a cleanup will run
 
     var cleanupRoutine = function() {
-        if (Math.floor((Math.random() * 10) + 1) == cleanupChance) {
+        if (Math.floor((Math.random() * cleanupChance) + 1) == cleanupChance) {
             ChatMessage.clearExpiredData(req.body.conversationId, function(err) {
                 if (err) {
                     console.error(err);
