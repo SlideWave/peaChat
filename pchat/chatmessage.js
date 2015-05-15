@@ -73,8 +73,19 @@ ChatMessage.getRecentChatMessages = function(conversationId, userId, callback) {
         "ORDER BY timestamp DESC LIMIT 100",
         [conversationId, ChatMessage.retentionDays, userId, conversationId],
         function(err, results) {
-            console.info(results);
-            callback(err, results);
+            if (err || results.length > 0) {
+                callback(err, results);
+
+            } else {
+                //there were no entries in the last day,
+                //just grab the last one and send it back to establish the
+                //most recent ID
+                ChatMessage.mapChatQuery(
+                    "SELECT * FROM chat WHERE conversation_id = ? " +
+                    "ORDER BY timestamp DESC LIMIT 1",
+                    [conversationId], callback
+                );
+            }
         }
     );
 }

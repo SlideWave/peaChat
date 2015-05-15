@@ -15,23 +15,14 @@ router.get('/:id', function(req, res) {
             return;
         }
 
-        ChatMessage.getRecentChatMessages(req.params.id, sess.userId, function (err, messages) {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Could not complete request');
-                return;
-            }
-
-            res.render('chat',
-                {   title: info.title,
-                    username: sess.username,
-                    messages: messages,
-                    pageScript: ['chat.page.js', 'dropzone.page.js'],
-                    session: sess,
-                    conversationId: info.conversationId,
-                    checkpoint: info.checkpoint
-                });
-        });
+        res.render('chat',
+            {   title: info.title,
+                username: sess.username,
+                pageScript: ['chat.page.js', 'dropzone.page.js'],
+                session: sess,
+                conversationId: info.conversationId,
+                checkpoint: info.checkpoint
+            });
     });
 
 });
@@ -128,28 +119,29 @@ router.post('/room/join', function(req, res) {
 router.get('/recent/:id', function(req, res) {
     var sess = req.session;
 
-    ChatMessage.getRecentChatMessages(req.params.id, sess.userId, function (err, messages) {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Could not complete request');
-            return;
-        }
+    ChatMessage.getRecentChatMessages(req.params.id, sess.userId,
+        function (err, messages) {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
 
-        //reverse the sorting since it will be newest first
-        //coming out of the DB
-        var reordered = [];
-        for (var i = messages.length - 1; i >= 0; i--) {
-            reordered.push(messages[i]);
-        }
+            //reverse the sorting since it will be newest first
+            //coming out of the DB
+            var reordered = [];
+            for (var i = messages.length - 1; i >= 0; i--) {
+                reordered.push(messages[i]);
+            }
 
-        //blank out the user's email
-        for (var i = 0, len=reordered.length; i < len; i++) {
-            messages[i].user.email = null;
-            messages[i].user.salt = null;
-            messages[i].user.pwHash = null;
-        }
+            //blank out the user's email
+            for (var i = 0, len=reordered.length; i < len; i++) {
+                messages[i].user.email = null;
+                messages[i].user.salt = null;
+                messages[i].user.pwHash = null;
+            }
 
-        res.json(reordered);
+            res.json(reordered);
     });
 });
 

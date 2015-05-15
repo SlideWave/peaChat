@@ -76,6 +76,7 @@ function addToChatBox(messages) {
 
     for (var i = 0, len=messages.length; i < len; i++) {
         var msg = messages[i];
+        if (msg.timestamp <= checkpoint) break;
 
         var liClass = 'left';
         var spanClass = 'pull-left';
@@ -288,7 +289,7 @@ $(document).ready(function() {
     });
 
     $("#chat-clear").click(function (e) {
-        var checkpoint = lastTimestamp;
+        checkpoint = lastTimestamp;
         chatClear();
 
         $.ajax({
