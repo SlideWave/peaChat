@@ -15,7 +15,7 @@ router.get('/:id', function(req, res) {
             return;
         }
 
-        ChatMessage.getRecentChatMessages(req.params.id, function (err, messages) {
+        ChatMessage.getRecentChatMessages(req.params.id, sess.userId, function (err, messages) {
             if (err) {
                 console.error(err);
                 res.status(500).send('Could not complete request');
@@ -28,7 +28,8 @@ router.get('/:id', function(req, res) {
                     messages: messages,
                     pageScript: ['chat.page.js', 'dropzone.page.js'],
                     session: sess,
-                    conversationId: info.conversationId
+                    conversationId: info.conversationId,
+                    checkpoint: info.checkpoint
                 });
         });
     });
@@ -125,7 +126,9 @@ router.post('/room/join', function(req, res) {
 });
 
 router.get('/recent/:id', function(req, res) {
-    ChatMessage.getRecentChatMessages(req.params.id, function (err, messages) {
+    var sess = req.session;
+
+    ChatMessage.getRecentChatMessages(req.params.id, sess.userId, function (err, messages) {
         if (err) {
             console.error(err);
             res.status(500).send('Could not complete request');
@@ -226,6 +229,22 @@ router.post('/leave', function(req, res) {
     var sess = req.session;
 
     OpenChat.leaveChat(req.body.conversationId, sess.userId,
+        function (err) {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
+
+            res.json({"status": "ok"});
+        }
+    );
+});
+
+router.post('/checkpoint', function(req, res) {
+    var sess = req.session;
+
+    OpenChat.setCheckpoint(req.body.conversationId, sess.userId, req.body.checkpoint,
         function (err) {
             if (err) {
                 console.error(err);

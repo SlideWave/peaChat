@@ -4,11 +4,12 @@ var config = require('./config');
 var User = require('./user');
 var md5 = require('MD5');
 
-var OpenChat = function(conversationId, userId, title, type) {
+var OpenChat = function(conversationId, userId, title, type, checkpoint) {
     this.conversationId = conversationId;
     this.userId = userId;
     this.title = title;
     this.type = type;
+    this.checkpoint = checkpoint;
 }
 
 OpenChat.IM = 0;
@@ -38,7 +39,7 @@ OpenChat.mapOpenChatQuery = function(sql, params, callback) {
 
                     ret.push(
                       new OpenChat(result.conversation_id, result.user_id,
-                        result.title, result.type));
+                        result.title, result.type, result.checkpoint));
                 }
 
                 connection.end();
@@ -192,5 +193,30 @@ OpenChat.leaveChat = function(conversationId, userId, callback) {
     });
 }
 
+OpenChat.setCheckpoint = function(conversationId, userId, checkpoint, callback) {
+    var connection = mysql.createConnection(config.siteDatabaseOptions);
+
+    connection.connect(function(err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            callback(err);
+            return;
+        }
+
+        var sql = "UPDATE open_chats SET checkpoint = ? WHERE user_id = ? AND conversation_id = ?;";
+
+        connection.query(sql, [checkpoint, userId, conversationId],
+            function(err, results) {
+                if (err) {
+                    connection.end();
+                    callback(err);
+                    return;
+                }
+
+                callback(null);
+                connection.end();
+        });
+    });
+}
 
 module.exports = OpenChat;

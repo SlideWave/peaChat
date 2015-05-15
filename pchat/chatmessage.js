@@ -38,7 +38,7 @@ ChatMessage.mapChatQuery = function(sql, params, callback) {
                     var result = results[i];
 
                     ret.push(
-                      new ChatMessage(result.chat_id, result.timestamp,
+                      new ChatMessage(result.conversation_id, result.timestamp,
                         result.user_id, result.message, result.media));
                 }
 
@@ -64,25 +64,17 @@ ChatMessage.mapChatQuery = function(sql, params, callback) {
     });
 }
 
-ChatMessage.getRecentChatMessages = function(conversationId, callback) {
+ChatMessage.getRecentChatMessages = function(conversationId, userId, callback) {
     ChatMessage.mapChatQuery(
         "SELECT * FROM chat " +
         "WHERE conversation_id = ? " +
           "AND timestamp >= UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? DAY)) * 1000 " +
-        "ORDER BY timestamp DESC LIMIT 100", [conversationId, ChatMessage.retentionDays],
+          "AND timestamp > (SELECT checkpoint FROM open_chats WHERE user_id = ? AND conversation_id = ?) " +
+        "ORDER BY timestamp DESC LIMIT 100",
+        [conversationId, ChatMessage.retentionDays, userId, conversationId],
         function(err, results) {
-
-            if (err || results.length > 0) {
-                callback(err, results);
-            } else {
-                //there were no entries in the last day,
-                //just grab the last one and send it back
-                ChatMessage.mapChatQuery(
-                    "SELECT * FROM chat WHERE conversation_id = ? " +
-                    "ORDER BY timestamp DESC LIMIT 1",
-                    [conversationId], callback
-                );
-            }
+            console.info(results);
+            callback(err, results);
         }
     );
 }

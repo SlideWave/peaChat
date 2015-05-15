@@ -262,9 +262,17 @@ $(document).ready(function() {
         url: "/chat/recent/" + cid,
         contentType: "application/json",
         success:
-        function(data) {
-            addToChatBox(data);
-        }
+            function(data) {
+                addToChatBox(data);
+                if (lastTimestamp < checkpoint) {
+                    lastTimestamp = checkpoint;
+                }
+            },
+
+        complete:
+            function (a,b) {
+                pollTimeoutHandle = setTimeout(chatTimer, pollRate);
+            }
     });
 
     $("#btn-chat").click(function(evt) {
@@ -280,7 +288,21 @@ $(document).ready(function() {
     });
 
     $("#chat-clear").click(function (e) {
+        var checkpoint = lastTimestamp;
         chatClear();
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/chat/checkpoint",
+            contentType: "application/json",
+            data: JSON.stringify({"conversationId": cid, "checkpoint": checkpoint}),
+            success:
+            function(data) {
+
+            }
+        });
+
         e.preventDefault();
     });
 
@@ -315,6 +337,4 @@ $(document).ready(function() {
             }
         });
     });
-
-    pollTimeoutHandle = setTimeout(chatTimer, pollRate);
 });
