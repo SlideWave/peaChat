@@ -12,10 +12,12 @@ config.siteDatabaseOptions = {
 
 config.sessionSecret = 'changeMe';
 
+/*
 config.httpsOptions = {
     key: fs.readFileSync('/Users/ddaeschler/Desktop/pchat.slidewave.com.key'),
     cert: fs.readFileSync('/Users/ddaeschler/Desktop/pchat.slidewave.com.cert'),
 };
+*/
 
 config.uploadDir = './upload/';
 

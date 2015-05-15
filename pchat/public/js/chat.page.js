@@ -4,6 +4,8 @@ var alertTimeoutId = null;
 var focused = true;
 var title = document.title;
 var maxDisplayed = 100;
+var pollTimeoutHandle = null;
+var pollInProgress = false;
 
 window.onfocus = function () {
     if (alertTimeoutId != null) {
@@ -165,6 +167,7 @@ function addToChatBox(messages) {
 
 function getChatSinceLastCheck(completedCallback) {
     var cid = conversationId;
+    pollInProgress = true;
 
     $.ajax({
         type: "GET",
@@ -179,6 +182,7 @@ function getChatSinceLastCheck(completedCallback) {
 
         complete:
             function(xhr, status) {
+                pollInProgress = false;
                 completedCallback();
             }
     });
@@ -199,6 +203,12 @@ function sendChat() {
         data: JSON.stringify({"chatText": text, "conversationId": cid}),
         success:
         function(data) {
+            //once we have posted, schedule an immediate pull
+            //to get our message right away
+            if (! pollInProgress) {
+                clearTimeout(pollTimeoutHandle);
+                pollTimeoutHandle = setTimeout(chatTimer, 1);
+            }
         }
     });
 }
@@ -214,7 +224,7 @@ function chatRefresh(callback) {
 
 function chatTimer() {
     chatRefresh(function() {
-        setTimeout(chatTimer, pollRate);
+        pollTimeoutHandle = setTimeout(chatTimer, pollRate);
     });
 }
 
@@ -306,5 +316,5 @@ $(document).ready(function() {
         });
     });
 
-    setTimeout(chatTimer, pollRate);
+    pollTimeoutHandle = setTimeout(chatTimer, pollRate);
 });
