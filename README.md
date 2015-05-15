@@ -19,7 +19,7 @@ Live demo at https://pchat.slidewave.com
 * git clone https://github.com/ddaeschler/pchat.git
 * Go to the pchat directory and edit config.js for your environment spcifying your mysql credentials
 and if necessary the full local path to the upload directory (required when using certain init scripts)
-* Run node app.js setup to initialize the database
+* Run "node app.js setup" to initialize the database
 * Start the app using an init script or "node bin/www"
 
 ## Plans:
