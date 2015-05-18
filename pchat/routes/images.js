@@ -24,9 +24,27 @@ router.post('/upload', function(req, res) {
     }
 
     var inFile = req.files.uploadfile;
+    var exifFunc;
+
+    if (req.files.uploadfile.mimetype == "image/jpeg") {
+        exifFunc = function(callback) {
+            try {
+                new ExifImage({image: inFile.path}, callback);
+            } catch (e) {
+                console.error(e);
+                callback(e, null);
+            }
+        }
+    } else {
+        exifFunc = function(callback) {
+            callback(null, null);
+        }
+    }
+
+
 
     //load the exif data and see if we need to perform a rotation
-    new ExifImage({image : inFile.path}, function (error, exifData) {
+    exifFunc(function (error, exifData) {
         var rotFlag = 0;
         if (! error) {
             if (exifData && exifData.image && exifData.image.Orientation) {
