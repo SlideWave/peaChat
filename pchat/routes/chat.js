@@ -249,5 +249,19 @@ router.post('/checkpoint', function(req, res) {
     );
 });
 
+router.get('/timestamp/:id', function(req, res) {
+    var sess = req.session;
+
+    ChatMessage.getLatestTimestamp(req.params.id, function(err, timestamp) {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Could not complete request');
+            return;
+        }
+
+        res.json({"timestamp": timestamp});
+    });
+});
+
 
 module.exports = router;
