@@ -189,5 +189,40 @@ ChatMessage.clearExpiredData = function(conversationId, callback) {
     });
 }
 
+/**
+ * Returns the most recent message timestamp in a conversation
+ */
+ChatMessage.getLatestTimestamp = function(conversationId, callback) {
+    var connection = mysql.createConnection(config.siteDatabaseOptions);
+
+    connection.connect(function(err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            callback(err);
+            return;
+        }
+
+        var sql = "SELECT MAX(timestamp) as ts FROM chat WHERE conversation_id = ?;";
+
+        connection.query(sql, [conversationId],
+            function(err, results) {
+                if (err) {
+                    connection.end();
+                    console.error('error querying: ' + err.stack);
+                    callback(err, null);
+                    return;
+                }
+
+                if (results.length > 0) {
+                    callback(null, results[0].ts);
+                } else {
+                    callback(null, null);
+                }
+
+                connection.end();
+        });
+    });
+}
+
 
 module.exports = ChatMessage;
