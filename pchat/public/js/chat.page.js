@@ -143,8 +143,7 @@ function addToChatBox(messages) {
                 evt.preventDefault();
             });
         })(msg.user.profileImage);
-        
-        $("#" + id + "_message").linkify();
+
 
         if (msg.media) {
             (function (mimage) {
@@ -155,6 +154,8 @@ function addToChatBox(messages) {
                     evt.preventDefault();
                 });
             })(msg.media);
+        } else {
+            $("#" + id + "_message").linkify();
         }
 
 
