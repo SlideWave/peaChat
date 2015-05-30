@@ -1,7 +1,7 @@
 # pchat
 Responsive, privately hostable chat and IM software on node.js and mysql
 
-* Private instant messaging 
+* Private instant messaging
 * Group chat rooms
 * Profile images
 * Image uploads / inline media in chats
@@ -26,4 +26,3 @@ and if necessary the full local path to the upload directory (required when usin
 
 * CDN Image support
 * Better notification of incoming messages from chats you are not monitoring
-* Minor fixes to the mobile layout especially on the image upload modals
