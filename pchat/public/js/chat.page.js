@@ -128,7 +128,9 @@ function addToChatBox(messages) {
                             '<i class="fa fa-clock-o fa-fw"></i><span data-date="' + localTimePostedOn + '">' + posted + '</span> ago' +
                         '</small>' +
                     '</div>' +
+                    '<span id="' + id + '_message">' +
                         body +
+                    '</span>' +
                 '</div>' +
             '</li>'
         );
@@ -141,6 +143,8 @@ function addToChatBox(messages) {
                 evt.preventDefault();
             });
         })(msg.user.profileImage);
+        
+        $("#" + id + "_message").linkify();
 
         if (msg.media) {
             (function (mimage) {
