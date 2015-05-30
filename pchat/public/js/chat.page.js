@@ -147,7 +147,7 @@ function addToChatBox(messages) {
 
         if (msg.media) {
             (function (mimage) {
-                $("#" + id + " > div.chat-body > a.media").click(function (evt) {
+                $("#" + id + "_message > a").click(function (evt) {
                     if (pimage != null) {
                         showMediaImage(mimage);
                     }
