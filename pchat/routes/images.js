@@ -4,6 +4,7 @@ var path = require('path');
 var config = require('../config');
 var lwip = require('lwip');
 var ExifImage = require('exif').ExifImage;
+var fs = require('fs');
 
 var THUMB_WIDTH = 50;
 
@@ -135,6 +136,13 @@ router.post('/upload', function(req, res) {
                                 };
 
                                 res.json(ret);
+
+                                //delete the original
+                                fs.unlink(inFile.path, function (err) {
+                                    if (err) {
+                                        console.error(err);
+                                    }
+                                });
                             });
                         });
                     });
