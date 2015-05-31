@@ -20,5 +20,6 @@ config.httpsOptions = {
 */
 
 config.uploadDir = './upload/';
+config.maxUploadSize = 4194304;
 
 module.exports = config;

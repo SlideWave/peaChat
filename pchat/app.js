@@ -45,7 +45,7 @@ app.use(
         dest: config.uploadDir,
         limits: {
             files: 1,
-            fileSize: 2097152
+            fileSize: config.maxUploadSize
         }
     })
 );

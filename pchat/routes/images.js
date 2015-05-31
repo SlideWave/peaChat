@@ -7,6 +7,7 @@ var ExifImage = require('exif').ExifImage;
 var fs = require('fs');
 
 var THUMB_WIDTH = 50;
+var MAX_DIMENSION = 2048;
 
 router.post('/upload', function(req, res) {
     //make sure that we have a single file and it is the correct type
@@ -42,8 +43,6 @@ router.post('/upload', function(req, res) {
         }
     }
 
-
-
     //load the exif data and see if we need to perform a rotation
     exifFunc(function (error, exifData) {
         var rotFlag = 0;
@@ -52,44 +51,40 @@ router.post('/upload', function(req, res) {
                 rotFlag = exifData.image.Orientation;
             }
         } else {
-            console.error(error);
+            console.error("Exif: " + error);
         }
 
-        //resize the image and also create a thumbnail
-        lwip.open(inFile.path, function(err, original) {
+        lwip.open(inFile.path, function(err, initial) {
             if (err) {
                 console.error(err);
                 res.status(500).send();
                 return;
             }
 
-            var rotDeg = 0;
-            var func = function(callback) { original.clone(callback); }
-            if (rotFlag != 0) {
+            var batch = initial.batch();
 
-                //we need to perform some kind of rotation
-                if (rotFlag == 3) {
-                    rotDeg = 180;
-                } else if (rotFlag == 6) {
-                    rotDeg = 90;
-                } else if (rotFlag == 8) {
-                    rotDeg == 270;
-                }
-
-                func = function(callback)
-                {
-                    original.rotate(rotDeg, callback);
-                }
+            //first, let's cut this image down to size
+            //find the largest dimension
+            var largeDimension;
+            if (initial.width() > initial.height()) {
+                //use the width to clamp
+                largeDimension = initial.width();
+            } else {
+                //use the height to clamp
+                largeDimension = initial.height();
             }
 
-            func(function(err, fullSized) {
+            scale = MAX_DIMENSION / largeDimension;
+            var rotDeg = 0;
+
+            var finish = function(err, fullSized) {
                 if (err) {
                     console.error(err);
                     res.status(500).send();
                     return;
                 }
 
-                //clone again before scaling
+                //clone again before scaling for thumbnail
                 fullSized.clone(function(err, fullClone) {
                     if (err) {
                         console.error(err);
@@ -147,7 +142,32 @@ router.post('/upload', function(req, res) {
                         });
                     });
                 });
-            });
+            };
+
+            if (rotFlag != 0) {
+                //we need to perform some kind of rotation
+                if (rotFlag == 3) {
+                    rotDeg = 180;
+                } else if (rotFlag == 6) {
+                    rotDeg = 90;
+                } else if (rotFlag == 8) {
+                    rotDeg == 270;
+                }
+
+                if (scale < 1.0) {
+                    batch.scale(scale).rotate(rotDeg).exec(finish);
+                } else {
+                    batch.rotate(rotDeg).exec(finish);
+                }
+
+            } else {
+                if (scale < 1.0) {
+                    batch.scale(scale).exec(finish);
+                } else {
+                    finish(null, initial);
+                }
+
+            }
         });
     });
 

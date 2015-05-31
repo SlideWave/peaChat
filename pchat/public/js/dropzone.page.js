@@ -4,9 +4,9 @@ var submissionDropzone;
 
 Dropzone.options.submissionDropzone = {
     url: "/images/upload",
-    maxFilesize: 3,
+    maxFilesize: 4,
     paramName: "uploadfile",
-    maxThumbnailFilesize: 3,
+    maxThumbnailFilesize: 4,
     clickable: true,
     maxFiles: 1,
     acceptedFiles: "image/jpeg,image/png",
