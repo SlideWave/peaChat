@@ -27,6 +27,13 @@ router.post('/upload', function(req, res) {
 
     var inFile = req.files.uploadfile;
     var exifFunc;
+    var shortType;
+
+    if (req.files.uploadfile.mimetype == "image/jpeg") {
+        shortType = "jpg";
+    } else {
+        shortType = "png";
+    }
 
     if (req.files.uploadfile.mimetype == "image/jpeg") {
         exifFunc = function(callback) {
@@ -37,6 +44,7 @@ router.post('/upload', function(req, res) {
                 callback(e, null);
             }
         }
+
     } else {
         exifFunc = function(callback) {
             callback(null, null);
@@ -54,7 +62,7 @@ router.post('/upload', function(req, res) {
             console.error("Exif: " + error);
         }
 
-        lwip.open(inFile.path, function(err, initial) {
+        lwip.open(inFile.path, shortType, function(err, initial) {
             if (err) {
                 console.error(err);
                 res.status(500).send();
