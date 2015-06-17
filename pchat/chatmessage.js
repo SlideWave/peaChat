@@ -25,7 +25,7 @@ ChatMessage.mapChatQuery = function(sql, params, callback) {
             return;
         }
 
-        var query = connection.query(sql, params,
+        connection.query(sql, params,
             function(err, results) {
                 if (err) {
                     connection.end();

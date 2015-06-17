@@ -21,5 +21,6 @@ config.httpsOptions = {
 
 config.uploadDir = './upload/';
 config.maxUploadSize = 4194304;
+config.imageRetentionPeriod = 172800000; //48 hrs in ms
 
 module.exports = config;
