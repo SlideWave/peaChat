@@ -44,5 +44,7 @@ CREATE TABLE `open_chats` (
   `title` varchar(128) NOT NULL,
   `type` tinyint(4) NOT NULL,
   `checkpoint` bigint(20) NOT NULL DEFAULT '0',
+  `partner_id` char(36) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`conversation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
