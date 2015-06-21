@@ -146,6 +146,8 @@ router.get('/recent/:id', function(req, res) {
 });
 
 router.get('/since/:id/:timestamp', function(req, res) {
+    var sess = req.session;
+
     ChatMessage.getNewChatMessagesSince(req.params.id, req.params.timestamp,
         function (err, messages) {
             if (err) {
@@ -162,15 +164,29 @@ router.get('/since/:id/:timestamp', function(req, res) {
             }
 
             res.json(messages);
+
+            //since this function is frequently called by the client
+            //we also use this opportunity to update the last_seen time
+            //for the user every few minutes
+            var LAST_SEEN_UPDATE_CHANCE = 60; //1 in X chance last_seen will be updated
+            if (Math.floor((Math.random() * LAST_SEEN_UPDATE_CHANCE) + 1)
+                == LAST_SEEN_UPDATE_CHANCE) {
+
+                User.updateLastSeenTimeToNow(sess.userId, function (err) {
+                    if (err) {
+                        console.error('Unable to update last seen time: ' + err);
+                    }
+                });
+            }
     });
 });
 
 router.post('/add', function(req, res) {
     var sess = req.session;
-    var cleanupChance = 10; //1 in X chance a cleanup will run
+    var CLEANUP_CHANCE = 10; //1 in X chance a cleanup will run
 
     var cleanupRoutine = function() {
-        if (Math.floor((Math.random() * cleanupChance) + 1) == cleanupChance) {
+        if (Math.floor((Math.random() * CLEANUP_CHANCE) + 1) == CLEANUP_CHANCE) {
             ChatMessage.clearExpiredData(req.body.conversationId, function(err) {
                 if (err) {
                     console.error(err);

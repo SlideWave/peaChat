@@ -6,13 +6,14 @@ var uuid = require('node-uuid');
 var md5 = require('MD5');
 
 
-var User = function(uuid, username, email, salt, pwHash, profileImage) {
+var User = function(uuid, username, email, salt, pwHash, profileImage, lastSeen) {
     this.UUID = uuid;
     this.username = username;
     this.email = email;
     this.salt = salt;
     this.pwHash = pwHash;
     this.profileImage = profileImage;
+    this.lastSeen = lastSeen;
 }
 
 User.mapUserQuery = function(sql, params, assoc, callback) {
@@ -50,7 +51,8 @@ User.mapUserQuery = function(sql, params, assoc, callback) {
 
                         ret.push(
                           new User(result.user_id, result.username, result.email,
-                            result.salt, result.pw_hash, result.profile_image));
+                            result.salt, result.pw_hash, result.profile_image,
+                            result.last_seen));
                     }
                 }
 
@@ -193,6 +195,33 @@ User.updateProfileImage = function(userId, newImage, callback) {
         var query = "UPDATE users SET profile_image = ? WHERE user_id = ?";
 
         connection.query(query, [newImage, userId],
+            function (err, results) {
+                if (err) {
+                    console.error(err);
+                    callback(err);
+                    return;
+                }
+
+                callback(null);
+            }
+        );
+    });
+}
+
+User.updateLastSeenTimeToNow = function(userId, callback) {
+    var connection = mysql.createConnection(config.siteDatabaseOptions);
+
+    connection.connect(function(err) {
+        if (err) {
+            console.error('error connecting: ' + err.stack);
+            callback(err, null);
+            return;
+        }
+
+        var timestamp = Date.now();
+        var query = "UPDATE users SET last_seen = ? WHERE user_id = ?";
+
+        connection.query(query, [timestamp, userId],
             function (err, results) {
                 if (err) {
                     console.error(err);
