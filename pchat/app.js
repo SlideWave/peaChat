@@ -96,6 +96,7 @@ var login = require('./routes/login');
 var chat = require('./routes/chat');
 var profile = require('./routes/profile');
 var images = require('./routes/images');
+var userRoute = require('./routes/user');
 
 //precatch any request coming in for any page
 //and force to the login page if the user does
@@ -144,6 +145,7 @@ app.use('/login', login);
 app.use('/chat', chat);
 app.use('/profile', profile);
 app.use('/images', images);
+app.use('/user', userRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

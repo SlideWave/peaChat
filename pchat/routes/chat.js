@@ -21,7 +21,9 @@ router.get('/:id', function(req, res) {
                 pageScript: ['chat.page.js', 'dropzone.page.js'],
                 session: sess,
                 conversationId: info.conversationId,
-                checkpoint: info.checkpoint
+                checkpoint: info.checkpoint,
+                chatType: info.type,
+                partnerId: info.partnerId
             });
     });
 

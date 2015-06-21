@@ -5,7 +5,6 @@ var crypto = require('crypto');
 var uuid = require('node-uuid');
 var md5 = require('MD5');
 
-
 var User = function(uuid, username, email, salt, pwHash, profileImage, lastSeen) {
     this.UUID = uuid;
     this.username = username;
@@ -15,6 +14,8 @@ var User = function(uuid, username, email, salt, pwHash, profileImage, lastSeen)
     this.profileImage = profileImage;
     this.lastSeen = lastSeen;
 }
+
+User.SELECT_LIST = 'SELECT user_id, username, email, salt, pw_hash, profile_image, last_seen ';
 
 User.mapUserQuery = function(sql, params, assoc, callback) {
     var connection = mysql.createConnection(config.siteDatabaseOptions);
@@ -42,7 +43,8 @@ User.mapUserQuery = function(sql, params, assoc, callback) {
 
                         ret[result.user_id] =
                           new User(result.user_id, result.username, result.email,
-                            result.salt, result.pw_hash, result.profile_image);
+                            result.salt, result.pw_hash, result.profile_image,
+                            result.last_seen);
                     }
                 } else {
                     ret = [];
@@ -74,14 +76,14 @@ User.resolveUsers = function(userList, callback) {
     }
 
     User.mapUserQuery(
-      'SELECT user_id, username, email, salt, pw_hash, profile_image ' +
+      User.SELECT_LIST +
       'FROM users WHERE user_id IN (?);',
       [userList], true, callback);
 }
 
 User.resolveUser = function(userId, callback) {
     User.mapUserQuery(
-      'SELECT user_id, username, email, salt, pw_hash, profile_image ' +
+      User.SELECT_LIST +
       'FROM users WHERE user_id = ?;',
       userId, false, function (err, result) {
           if (err) {
@@ -99,7 +101,7 @@ User.resolveUser = function(userId, callback) {
 
 User.findUserByName = function(userName, callback) {
   User.mapUserQuery(
-    'SELECT user_id, username, email, salt, pw_hash, profile_image ' +
+    User.SELECT_LIST +
     'FROM users WHERE username = ?;',
     [userName], false,
         function (err, result) {

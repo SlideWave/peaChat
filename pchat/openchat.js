@@ -4,12 +4,13 @@ var config = require('./config');
 var User = require('./user');
 var md5 = require('MD5');
 
-var OpenChat = function(conversationId, userId, title, type, checkpoint) {
+var OpenChat = function(conversationId, userId, title, type, checkpoint, partnerId) {
     this.conversationId = conversationId;
     this.userId = userId;
     this.title = title;
     this.type = type;
     this.checkpoint = checkpoint;
+    this.partnerId = partnerId;
 }
 
 OpenChat.IM = 0;
@@ -39,7 +40,8 @@ OpenChat.mapOpenChatQuery = function(sql, params, callback) {
 
                     ret.push(
                       new OpenChat(result.conversation_id, result.user_id,
-                        result.title, result.type, result.checkpoint));
+                        result.title, result.type, result.checkpoint,
+                        result.partner_id));
                 }
 
                 connection.end();
@@ -78,14 +80,14 @@ OpenChat.startIM = function(userA, userB, callback) {
     var btitle = "IM with " + userA.username;
 
     //create the new chat for both sides
-    OpenChat.createNewChat(convId, userA.UUID, atitle, OpenChat.IM,
+    OpenChat.createNewChat(convId, userA.UUID, atitle, OpenChat.IM, userB.UUID,
         function(err) {
             if (err && err.code != 'ER_DUP_ENTRY') { //we'll get dup if a user tries to start the same IM twice
                 callback(err, null);
                 return;
             }
 
-            OpenChat.createNewChat(convId, userB.UUID, btitle, OpenChat.IM,
+            OpenChat.createNewChat(convId, userB.UUID, btitle, OpenChat.IM, userA.UUID,
                 function(err) {
                     if (err && err.code != 'ER_DUP_ENTRY') {
                         callback(err);
@@ -100,7 +102,7 @@ OpenChat.startIM = function(userA, userB, callback) {
     );
 }
 
-OpenChat.createNewChat = function(conversationId, userId, title, type, callback) {
+OpenChat.createNewChat = function(conversationId, userId, title, type, partnerId, callback) {
     var connection = mysql.createConnection(config.siteDatabaseOptions);
 
     connection.connect(function(err) {
@@ -110,10 +112,10 @@ OpenChat.createNewChat = function(conversationId, userId, title, type, callback)
             return;
         }
 
-        var sql = "INSERT INTO open_chats(user_id, conversation_id, title, type) " +
-                  "VALUES(?, ?, ?, ?);";
+        var sql = "INSERT INTO open_chats(user_id, conversation_id, title, type, partner_id) " +
+                  "VALUES(?, ?, ?, ?, ?);";
 
-        var query = connection.query(sql, [userId, conversationId, title, type],
+        var query = connection.query(sql, [userId, conversationId, title, type, partnerId],
             function(err, results) {
                 if (err) {
                     connection.end();
@@ -151,7 +153,7 @@ OpenChat.joinRoom = function(roomName, userId, callback) {
     var atitle = roomName;
 
     //create the new chat for the user
-    OpenChat.createNewChat(convId, userId, atitle, OpenChat.CHATROOM,
+    OpenChat.createNewChat(convId, userId, atitle, OpenChat.CHATROOM, null,
         function(err) {
             if (err && err.code != 'ER_DUP_ENTRY') { //we'll get dup if a user tries to start the same room twice
                 callback(err, null);

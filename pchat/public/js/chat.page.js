@@ -6,6 +6,13 @@ var title = document.title;
 var maxDisplayed = 100;
 var pollTimeoutHandle = null;
 var pollInProgress = false;
+var partnerIsActive = true;
+
+var CHAT_TYPE_IM = 0;
+
+var CHANGE_NONE = 0;
+var CHANGE_ACTIVE = 1;
+var CHANGE_INACTIVE = 2;
 
 window.onfocus = function () {
     if (alertTimeoutId != null) {
@@ -219,12 +226,97 @@ function sendChat() {
     });
 }
 
+/**
+ * If we're in a 1 on 1 IM, this function checks the active
+ * times for the person we're in an IM with, and reports any
+ * changes in activity status
+ */
+function checkForActivityChange(force, callback) {
+    if (chatType == CHAT_TYPE_IM) {
+        var changeType = CHANGE_NONE;
+
+        //retrieve the user's last active time once every
+        //120 intervals. On normal configurations this will
+        //happen about once every two minutes at random
+        var ACTIVITY_UPDATE_CHANCE = 120;
+        if (force ||
+            Math.floor((Math.random() * ACTIVITY_UPDATE_CHANCE) + 1)
+                == ACTIVITY_UPDATE_CHANCE) {
+
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "/user/lastseen/" + partnerId,
+                contentType: "application/json",
+
+                success:
+                    function(data) {
+                        var tzoff = new Date().getTimezoneOffset();
+                        var localTimePostedOn = moment(data.lastseen).zone(tzoff);
+                        var activeDifference = moment.duration(localTimePostedOn.diff(moment()));
+                        var posted = activeDifference.humanize();
+
+                        var liClass = 'right';
+                        var spanClass = 'pull-right';
+                        var smallClass = '';
+                        var strongClass = 'pull-right';
+
+                        var chageDesc;
+
+                        var MINUTES_TO_IDLE = 5;
+
+                        if (partnerIsActive && -activeDifference.minutes() > MINUTES_TO_IDLE) {
+                            changeType = CHANGE_INACTIVE;
+                            changeDesc = data.name + " went idle ";
+                            partnerIsActive = false;
+                        } else if (!partnerIsActive && -activeDifference.minutes() < MINUTES_TO_IDLE) {
+                            changeType = CHANGE_ACTIVE;
+                            changeDesc = data.name + " is active ";
+                            partnerIsActive = true;
+                        } else {
+                            changeType = CHANGE_NONE;
+                        }
+
+                        if (changeType != CHANGE_NONE) {
+                            $("ul.chat").append(
+                                '<li class="' + liClass + ' clearfix chatmessage">' +
+                                    '<div class="chat-body clearfix">' +
+                                        '<div class="header">' +
+                                            '<small class="' + smallClass + ' text-muted post-date">' +
+                                                '<i class="fa fa-clock-o fa-fw"></i>' + changeDesc + '<span data-date="' + localTimePostedOn + '">' + posted + '</span> ago' +
+                                            '</small>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</li>'
+                            );
+                        }
+                    },
+
+                complete:
+                    function (a,b) {
+                        callback(changeType);
+                    }
+            });
+        } else {
+            callback(changeType);
+        }
+
+    } else {
+        callback(changeType);
+    }
+}
+
 function chatRefresh(callback) {
     getChatSinceLastCheck(function() {
         pruneOldMessages();
         updateChatTimes();
 
-        callback();
+        checkForActivityChange(false,
+            function (changeType) {
+                callback();
+            }
+        );
+
     });
 }
 
@@ -277,7 +369,11 @@ $(document).ready(function() {
 
         complete:
             function (a,b) {
-                pollTimeoutHandle = setTimeout(chatTimer, pollRate);
+                checkForActivityChange(true,
+                    function (changeType) {
+                        pollTimeoutHandle = setTimeout(chatTimer, pollRate);
+                    }
+                );
             }
     });
 
