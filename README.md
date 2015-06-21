@@ -6,6 +6,7 @@ Responsive, privately hostable chat and IM software on node.js and mysql
 * Profile images
 * Image uploads / inline media in chats
 * Full sized image views on click
+* User presence status for when a user is active vs not on the app
 
 Layout created with bootstrap.
 
