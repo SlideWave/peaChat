@@ -7,6 +7,7 @@ var maxDisplayed = 100;
 var pollTimeoutHandle = null;
 var pollInProgress = false;
 var partnerIsActive = true;
+var lastPartnerCheckin = 0;
 
 var CHAT_TYPE_IM = 0;
 
@@ -275,9 +276,17 @@ function checkForActivityChange(force, callback) {
                             changeType = CHANGE_ACTIVE;
                             changeDesc = data.name + " is active ";
                             partnerIsActive = true;
+                        } else if (!partnerIsActive && lastPartnerCheckin != data.lastseen) {
+                            //anytime there is a period where someone goes idle
+                            //again, but we missed them being active
+                            changeType = CHANGE_INACTIVE;
+                            changeDesc = data.name + " went idle ";
+                            partnerIsActive = false;
                         } else {
                             changeType = CHANGE_NONE;
                         }
+
+                        lastPartnerCheckin = data.lastseen;
 
                         if (changeType != CHANGE_NONE) {
                             $("ul.chat").append(
