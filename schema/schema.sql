@@ -30,7 +30,8 @@ CREATE TABLE `users` (
   `email` varchar(128) NOT NULL,
   `salt` char(16) NOT NULL,
   `pw_hash` char(32) NOT NULL,
-  `profile_image` varchar(128) NULL,
+  `profile_image` varchar(128) DEFAULT NULL,
+  `last_seen` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `IDX_USERNAME` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
