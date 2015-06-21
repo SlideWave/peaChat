@@ -236,9 +236,11 @@ function checkForActivityChange(force, callback) {
         var changeType = CHANGE_NONE;
 
         //retrieve the user's last active time once every
-        //120 intervals. On normal configurations this will
-        //happen about once every two minutes at random
-        var ACTIVITY_UPDATE_CHANCE = 120;
+        //30 intervals. On normal configurations this will
+        //happen about once every 30 seconds at random,
+        //unless the app is in the background in which case
+        //some browsers slow this down significantly
+        var ACTIVITY_UPDATE_CHANCE = 30;
         if (force ||
             Math.floor((Math.random() * ACTIVITY_UPDATE_CHANCE) + 1)
                 == ACTIVITY_UPDATE_CHANCE) {

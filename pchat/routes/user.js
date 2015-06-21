@@ -21,7 +21,7 @@ router.get('/lastseen/:id', function(req, res) {
         }
 
         var obj = {name: user.username, lastseen: user.lastSeen};
-        console.info(obj);
+        //console.info(obj);
 
         res.json(obj);
     });
