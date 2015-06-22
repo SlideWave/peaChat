@@ -170,11 +170,11 @@ router.get('/since/:id/:timestamp', function(req, res) {
             //since this function is frequently called by the client
             //we also use this opportunity to update the last_seen time
             //for the user every few minutes
-            var LAST_SEEN_UPDATE_CHANCE = 60; //1 in X chance last_seen will be updated
+            var LAST_SEEN_UPDATE_CHANCE = 10; //1 in X chance last_seen will be updated
             if (Math.floor((Math.random() * LAST_SEEN_UPDATE_CHANCE) + 1)
                 == LAST_SEEN_UPDATE_CHANCE) {
 
-                User.updateLastSeenTimeToNow(sess.userId, function (err) {
+                User.updateLastSeenTimeToNowIfNecessary(sess.userId, function (err) {
                     if (err) {
                         console.error('Unable to update last seen time: ' + err);
                     }

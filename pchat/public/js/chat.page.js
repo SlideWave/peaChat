@@ -180,7 +180,7 @@ function addToChatBox(messages) {
 
 function getChatSinceLastCheck(completedCallback) {
     var cid = conversationId;
-
+    
     $.ajax({
         type: "GET",
         dataType: "json",
@@ -216,11 +216,10 @@ function sendChat() {
         function(data) {
             //once we have posted, schedule an immediate pull
             //to retrieve our message right away
-            if (pollTimeoutHandle != null) {) {
+            if (pollTimeoutHandle != null) {
                 clearTimeout(pollTimeoutHandle);
+                pollTimeoutHandle = setTimeout(chatTimer, 1);
             }
-
-            pollTimeoutHandle = setTimeout(chatTimer, 1);
         }
     });
 }
@@ -266,11 +265,11 @@ function checkForActivityChange(force, callback) {
 
                         var MINUTES_TO_IDLE = 5;
 
-                        if (partnerIsActive && -activeDifference.minutes() > MINUTES_TO_IDLE) {
+                        if (partnerIsActive && -activeDifference.asMinutes() > MINUTES_TO_IDLE) {
                             changeType = CHANGE_INACTIVE;
                             changeDesc = data.name + " went idle ";
                             partnerIsActive = false;
-                        } else if (!partnerIsActive && -activeDifference.minutes() < MINUTES_TO_IDLE) {
+                        } else if (!partnerIsActive && -activeDifference.asMinutes() < MINUTES_TO_IDLE) {
                             changeType = CHANGE_ACTIVE;
                             changeDesc = data.name + " is active ";
                             partnerIsActive = true;

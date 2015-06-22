@@ -214,7 +214,7 @@ User.updateProfileImage = function(userId, newImage, callback) {
     });
 }
 
-User.updateLastSeenTimeToNow = function(userId, callback) {
+User.updateLastSeenTimeToNowIfNecessary = function(userId, callback) {
     var connection = mysql.createConnection(config.siteDatabaseOptions);
 
     connection.connect(function(err) {
@@ -225,9 +225,11 @@ User.updateLastSeenTimeToNow = function(userId, callback) {
         }
 
         var timestamp = Date.now();
-        var query = "UPDATE users SET last_seen = ? WHERE user_id = ?";
+        var twoMinutesAgo =  timestamp - (2 * 60 * 1000);
+        var query = "UPDATE users SET last_seen = ? WHERE user_id = ? " +
+                        "AND last_seen <= ?;";
 
-        connection.query(query, [timestamp, userId],
+        connection.query(query, [timestamp, userId, twoMinutesAgo],
             function (err, results) {
                 connection.end();
 
