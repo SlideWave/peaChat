@@ -168,6 +168,8 @@ User.createUser = function(userName, email, password, callback) {
 
         connection.query(query, [newId, userName, email, salt, pwHash, null],
             function (err, results) {
+                connection.end();
+
                 if (err) {
                     console.error(err);
                     callback(err);
@@ -198,6 +200,8 @@ User.updateProfileImage = function(userId, newImage, callback) {
 
         connection.query(query, [newImage, userId],
             function (err, results) {
+                connection.end();
+
                 if (err) {
                     console.error(err);
                     callback(err);
@@ -225,6 +229,8 @@ User.updateLastSeenTimeToNow = function(userId, callback) {
 
         connection.query(query, [timestamp, userId],
             function (err, results) {
+                connection.end();
+
                 if (err) {
                     console.error(err);
                     callback(err);
