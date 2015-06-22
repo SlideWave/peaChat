@@ -180,7 +180,7 @@ function addToChatBox(messages) {
 
 function getChatSinceLastCheck(completedCallback) {
     var cid = conversationId;
-    
+
     $.ajax({
         type: "GET",
         dataType: "json",
@@ -297,6 +297,9 @@ function checkForActivityChange(force, callback) {
                                     '</div>' +
                                 '</li>'
                             );
+
+                            //something was added, scroll to the bottom
+                            document.getElementById('chat-body').scrollTop = 99999;
                         }
                     },
 
