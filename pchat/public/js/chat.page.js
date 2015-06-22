@@ -5,7 +5,6 @@ var focused = true;
 var title = document.title;
 var maxDisplayed = 100;
 var pollTimeoutHandle = null;
-var pollInProgress = false;
 var partnerIsActive = true;
 var lastPartnerCheckin = 0;
 
@@ -181,7 +180,6 @@ function addToChatBox(messages) {
 
 function getChatSinceLastCheck(completedCallback) {
     var cid = conversationId;
-    pollInProgress = true;
 
     $.ajax({
         type: "GET",
@@ -196,7 +194,6 @@ function getChatSinceLastCheck(completedCallback) {
 
         complete:
             function(xhr, status) {
-                pollInProgress = false;
                 completedCallback();
             }
     });
@@ -218,11 +215,12 @@ function sendChat() {
         success:
         function(data) {
             //once we have posted, schedule an immediate pull
-            //to get our message right away
-            if (! pollInProgress) {
+            //to retrieve our message right away
+            if (pollTimeoutHandle != null) {) {
                 clearTimeout(pollTimeoutHandle);
-                pollTimeoutHandle = setTimeout(chatTimer, 1);
             }
+
+            pollTimeoutHandle = setTimeout(chatTimer, 1);
         }
     });
 }
@@ -318,6 +316,8 @@ function checkForActivityChange(force, callback) {
 }
 
 function chatRefresh(callback) {
+    pollTimeoutHandle = null;
+
     getChatSinceLastCheck(function() {
         pruneOldMessages();
         updateChatTimes();
@@ -333,7 +333,9 @@ function chatRefresh(callback) {
 
 function chatTimer() {
     chatRefresh(function() {
-        pollTimeoutHandle = setTimeout(chatTimer, pollRate);
+        if (pollTimeoutHandle == null) {
+            pollTimeoutHandle = setTimeout(chatTimer, pollRate);
+        }
     });
 }
 
