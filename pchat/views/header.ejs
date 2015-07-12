@@ -35,7 +35,6 @@
     <% if (locals.session) { %>
     <script>
         var userid = '<%= locals.session.userId %>';
-
         var openChats = <%- JSON.stringify(openChats) %>;
     </script>
     <% } %>
