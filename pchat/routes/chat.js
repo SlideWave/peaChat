@@ -4,29 +4,21 @@ var ChatMessage = require('../chatmessage');
 var OpenChat = require('../openchat');
 var User = require('../user');
 
-/* GET the messages from a specific chat */
-router.get('/:id', function(req, res) {
+/**
+ * Returns the JSON summary of open chats for the given user
+ */
+router.get('/summary', function(req, res) {
     var sess = req.session;
 
-    OpenChat.findChatInfo(sess.userId, req.params.id, function(err, info) {
-        if (err || !info) {
-            if (err) console.error(err);
+    OpenChat.getOpenChats(sess.userId, function(err, chats) {
+        if (err) {
+            console.error(err);
             res.status(500).send('Could not complete request');
             return;
         }
 
-        res.render('chat',
-            {   title: info.title,
-                username: sess.username,
-                pageScript: ['chat.page.js', 'dropzone.page.js'],
-                session: sess,
-                conversationId: info.conversationId,
-                checkpoint: info.checkpoint,
-                chatType: info.type,
-                partnerId: info.partnerId
-            });
+        res.json(chats);
     });
-
 });
 
 /**
@@ -281,5 +273,32 @@ router.get('/timestamp/:id', function(req, res) {
     });
 });
 
+/**
+ * GET the messages from a specific chat. This should be the last
+ * route so that it doesnt swallow other calls
+ */
+router.get('/:id', function(req, res) {
+    var sess = req.session;
+
+    OpenChat.findChatInfo(sess.userId, req.params.id, function(err, info) {
+        if (err || !info) {
+            if (err) console.error(err);
+            res.status(500).send('Could not complete request');
+            return;
+        }
+
+        res.render('chat',
+            {   title: info.title,
+                username: sess.username,
+                pageScript: ['chat.page.js', 'dropzone.page.js'],
+                session: sess,
+                conversationId: info.conversationId,
+                checkpoint: info.checkpoint,
+                chatType: info.type,
+                partnerId: info.partnerId
+            });
+    });
+
+});
 
 module.exports = router;
