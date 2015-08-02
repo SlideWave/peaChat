@@ -21,7 +21,7 @@
     <link href="/css/sb-admin-2.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -36,6 +36,10 @@
     <script>
         var userid = '<%= locals.session.userId %>';
         var openChats = <%- JSON.stringify(openChats) %>;
+    </script>
+    <% } else { %>
+    <script>
+        var openChats = [];
     </script>
     <% } %>
 </head>

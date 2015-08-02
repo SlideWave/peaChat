@@ -365,8 +365,43 @@ function chatClear() {
     });
 }
 
+function notifyChatEvent(event) {
+    var liClass = 'right';
+    var spanClass = 'pull-right';
+    var smallClass = '';
+    var strongClass = 'pull-right';
+    var timeNow = moment();
+
+    $("ul.chat").append(
+        '<li class="' + liClass + ' clearfix chatmessage">' +
+            '<div class="chat-body clearfix">' +
+                '<div class="header">' +
+                    '<small class="' + smallClass + ' text-muted post-date">' +
+                        '<i class="fa fa-commenting-o fa-fw"></i>' + event + '<span data-date="' + timeNow + '">0 seconds</span> ago' +
+                    '</small>' +
+                '</div>' +
+            '</div>' +
+        '</li>'
+    );
+
+    //something was added, scroll to the bottom
+    document.getElementById('chat-body').scrollTop = 99999;
+}
+
+function notifyNewChat(chat) {
+    notifyChatEvent("New chat started: " + chat.title);
+}
+
+function notifyChatUpdated(chat) {
+    notifyChatEvent("New message in " + chat.title);
+}
+
 $(document).ready(function() {
     var cid = conversationId;
+
+    //subscribe to notifications from the chat monitor
+    ChatMonitor.onNewChatCreated(notifyNewChat);
+    ChatMonitor.onChatUpdated(notifyChatUpdated);
 
     //grab the most recent chat messages
     $.ajax({
