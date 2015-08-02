@@ -27,4 +27,3 @@ and if necessary the full local path to the upload directory (required when usin
 ## Plans:
 
 * CDN Image support
-* Better notification of incoming messages from chats you are not monitoring
