@@ -132,7 +132,7 @@ function addToChatBox(messages) {
                             msg.user.username +
                         '</strong>' +
                         '<small class="' + smallClass + ' text-muted post-date">' +
-                            '<i class="fa fa-clock-o fa-fw"></i><span data-date="' + localTimePostedOn + '">' + posted + '</span> ago' +
+                            '<i class="fa fa-clock-o fa-fw"></i><span data-date="' + localTimePostedOn + '"> ' + posted + '</span> ago' +
                         '</small>' +
                     '</div>' +
                     '<span id="' + id + '_message">' +
@@ -291,7 +291,7 @@ function checkForActivityChange(force, callback) {
                                     '<div class="chat-body clearfix">' +
                                         '<div class="header">' +
                                             '<small class="' + smallClass + ' text-muted post-date">' +
-                                                '<i class="fa fa-clock-o fa-fw"></i>' + changeDesc + '<span data-date="' + localTimePostedOn + '">' + posted + '</span> ago' +
+                                                '<i class="fa fa-clock-o fa-fw"></i> ' + changeDesc + '<span data-date="' + localTimePostedOn + '">' + posted + '</span> ago' +
                                             '</small>' +
                                         '</div>' +
                                     '</div>' +
@@ -377,7 +377,7 @@ function notifyChatEvent(event) {
             '<div class="chat-body clearfix">' +
                 '<div class="header">' +
                     '<small class="' + smallClass + ' text-muted post-date">' +
-                        '<i class="fa fa-commenting-o fa-fw"></i>' + event + '<span data-date="' + timeNow + '">0 seconds</span> ago' +
+                        '<i class="fa fa-commenting-o fa-fw"></i> ' + event + ' <span data-date="' + timeNow + '">0 seconds</span> ago' +
                     '</small>' +
                 '</div>' +
             '</div>' +
@@ -393,7 +393,9 @@ function notifyNewChat(chat) {
 }
 
 function notifyChatUpdated(chat) {
-    notifyChatEvent("New message in " + chat.title);
+    if (chat.chatData.conversationId != conversationId) {
+        notifyChatEvent("New message in " + chat.chatData.title);
+    }
 }
 
 $(document).ready(function() {
