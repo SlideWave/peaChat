@@ -32,16 +32,15 @@
 
     <link href="/css/dropzone.css" rel="stylesheet">
 
-    <% if (locals.session) { %>
     <script>
+        var conversationId = 0;
+    <% if (locals.session) { %>
         var userid = '<%= locals.session.userId %>';
         var openChats = <%- JSON.stringify(openChats) %>;
-    </script>
     <% } else { %>
-    <script>
         var openChats = [];
-    </script>
     <% } %>
+    </script>
 </head>
 
 <body>
@@ -95,10 +94,10 @@
                                 }
                         %>
                         <li>
-                            <a href="/chat/<%= chat.conversationId%>"><i class="<%=cls%>"></i> <%= chat.title %></a>
+                            <a href="/chat/<%= chat.conversationId%>"><i class="<%=cls%>" id="convo-icon-<%= chat.conversationId%>"></i> <%= chat.title %></a>
                         </li>
                         <% } %>
-                        <li class="nav-divider"></li>
+                        <li class="nav-divider" id="convo-div"></li>
                         <li>
                             <a href="/login/out"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>

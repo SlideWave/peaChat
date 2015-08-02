@@ -55,6 +55,7 @@ ChatMonitor.updateTimestamps = function(timestampsUpdatedCallback) {
         //grab the most recent timestamp for the chat
         (function(thisChat, callback) {
             $.ajax({
+                cache: false,
                 type: "GET",
                 dataType: "json",
                 url: "/chat/timestamp/" + thisChat.chatData.conversationId,
@@ -88,6 +89,7 @@ ChatMonitor.findNewChats = function(callback) {
     var newChats = [];
 
     $.ajax({
+        cache: false,
         type: "GET",
         dataType: "json",
         url: "/chat/summary",

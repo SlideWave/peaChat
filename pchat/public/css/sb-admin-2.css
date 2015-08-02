@@ -392,3 +392,7 @@ table.dataTable thead .sorting:after {
 .evt-controls {
     font-size: 1.5em;
 }
+
+.new-convo {
+    color: red;
+}

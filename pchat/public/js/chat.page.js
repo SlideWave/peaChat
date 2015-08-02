@@ -182,9 +182,10 @@ function getChatSinceLastCheck(completedCallback) {
     var cid = conversationId;
 
     $.ajax({
+        cache: false,
         type: "GET",
         dataType: "json",
-        url: "/chat/since/" + cid + "/" + lastTimestamp +"?timestamp="+$.now(),
+        url: "/chat/since/" + cid + "/" + lastTimestamp,
         contentType: "application/json",
         timeout: 10000,
         success:
@@ -244,6 +245,7 @@ function checkForActivityChange(force, callback) {
                 == ACTIVITY_UPDATE_CHANCE) {
 
             $.ajax({
+                cache: false,
                 type: "GET",
                 dataType: "json",
                 url: "/user/lastseen/" + partnerId,
@@ -407,6 +409,7 @@ $(document).ready(function() {
 
     //grab the most recent chat messages
     $.ajax({
+        cache: false,
         type: "GET",
         dataType: "json",
         url: "/chat/recent/" + cid,
