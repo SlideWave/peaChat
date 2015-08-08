@@ -4,6 +4,7 @@ var config = require('../config');
 var mysql = require('mysql');
 var md5 = require('MD5');
 var moment = require('moment');
+var async = require('async');
 
 var User = require('../user');
 
@@ -69,7 +70,12 @@ router.post('/register', function(req, res) {
                 return;
             }
 
-            res.redirect('/login');
+            // no error, assign the user to the default rooms if there are any
+            if (config.defaultChatRooms && config.defaultChatRooms.length > 0) {
+
+            } else {
+                res.redirect('/login');
+            }
         }
     );
 });
