@@ -1,5 +1,4 @@
-pchat/node_modules/lwip/
-pchat/node_modules/async/
+pchat/node_modules/
 pchat/upload/
 .DS_Store
 pchat/public/images/media/*.*
