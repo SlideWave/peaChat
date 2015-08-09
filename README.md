@@ -1,4 +1,4 @@
-# pchat
+# peaChat
 Responsive, privately hostable chat and IM software on node.js and mysql
 
 * Private instant messaging
