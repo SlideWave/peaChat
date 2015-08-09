@@ -7,6 +7,7 @@ var moment = require('moment');
 var async = require('async');
 
 var User = require('../user');
+var OpenChat = require('../openchat');
 
 router.get('/', function(req, res) {
     res.render('login', { title: 'Login', pageScript: "login.page.js" });
@@ -58,13 +59,14 @@ router.post('/register', function(req, res) {
     }
 
     User.createUser(req.body.username, req.body.email, req.body.password,
-        function (err) {
+        function (err, newId) {
             if (err) {
                 if (err.code == 'ER_DUP_ENTRY') {
                   //this username is already taken
                   res.redirect('/login/register?e=taken');
                 } else {
-                  res.status(500).send('Could not complete request');
+                    console.error(err);
+                    res.status(500).send('Could not complete request');
                 }
 
                 return;
@@ -72,7 +74,17 @@ router.post('/register', function(req, res) {
 
             // no error, assign the user to the default rooms if there are any
             if (config.defaultChatRooms && config.defaultChatRooms.length > 0) {
-
+                async.eachSeries(Object.keys(config.defaultChatRooms), function (idx, callback) {
+                    OpenChat.joinRoom(config.defaultChatRooms[idx], newId, callback)
+                }, function done(err) {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).send('Could not complete request');
+                    } else {
+                        res.redirect('/login');
+                    }
+                }
+                );
             } else {
                 res.redirect('/login');
             }

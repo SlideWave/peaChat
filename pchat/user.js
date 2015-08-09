@@ -172,11 +172,11 @@ User.createUser = function(userName, email, password, callback) {
 
                 if (err) {
                     console.error(err);
-                    callback(err);
+                    callback(err, null);
                     return;
                 }
 
-                callback(null);
+                callback(null, newId);
             }
         );
     });
