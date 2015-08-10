@@ -7,6 +7,7 @@ var maxDisplayed = 100;
 var pollTimeoutHandle = null;
 var partnerIsActive = true;
 var lastPartnerCheckin = 0;
+var lastActivityCheck = 0;
 
 var CHAT_TYPE_IM = 0;
 
@@ -278,15 +279,9 @@ function checkForActivityChange(force, callback) {
         var changeType = CHANGE_NONE;
 
         //retrieve the user's last active time once every
-        //30 intervals. On normal configurations this will
-        //happen about once every 30 seconds at random,
-        //unless the app is in the background in which case
-        //some browsers slow this down significantly
-        var ACTIVITY_UPDATE_CHANCE = 30;
-        if (force ||
-            Math.floor((Math.random() * ACTIVITY_UPDATE_CHANCE) + 1)
-                == ACTIVITY_UPDATE_CHANCE) {
-
+        //30 seconds
+        var ACTIVITY_UPDATE_FREQUENCY = 30000;
+        if (force || Date.now() - lastActivityCheck >= ACTIVITY_UPDATE_FREQUENCY) {
             $.ajax({
                 cache: false,
                 type: "GET",
@@ -329,6 +324,7 @@ function checkForActivityChange(force, callback) {
                         }
 
                         lastPartnerCheckin = data.lastseen;
+                        lastActivityCheck = Date.now();
 
                         if (changeType != CHANGE_NONE) {
                             $("ul.chat").append(
