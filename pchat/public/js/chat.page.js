@@ -78,12 +78,16 @@ function showMediaImage(image) {
     });
 }
 
+function generateChatItemId(conversationId, timestamp, userId) {
+    return conversationId + timestamp.toString() + userId;
+}
+
 function addToChatBox(messages) {
     var tzoff = new Date().getTimezoneOffset();
 
     for (var i = 0, len=messages.length; i < len; i++) {
         var msg = messages[i];
-        if (msg.timestamp <= checkpoint) break;
+        if (!msg.surrgate && msg.timestamp <= checkpoint) break;
 
         var liClass = 'left';
         var spanClass = 'pull-left';
@@ -108,7 +112,10 @@ function addToChatBox(messages) {
             pimage = "/images/blank.png";
         }
 
-        var id = conversationId + msg.timestamp.toString() + msg.userId;
+        var id = generateChatItemId(conversationId, msg.timestamp, msg.userId);
+
+        //check for and remove the surrogate if it exists
+        $("#" + id).remove();
 
         var body;
         if (msg.media != null) {
@@ -163,10 +170,15 @@ function addToChatBox(messages) {
             })(msg.media);
         } else {
             $("#" + id + "_message").linkify();
+            if (msg.surrogate) {
+                //make it grey
+                $("#" + id + "_message").css("color", "#cccccc");
+            }
         }
 
-
-        lastTimestamp = msg.timestamp;
+        if (!msg.surrogate) {
+            lastTimestamp = msg.timestamp;
+        }
     }
 
     if (messages.length > 0) {
@@ -190,6 +202,7 @@ function getChatSinceLastCheck(completedCallback) {
         timeout: 10000,
         success:
             function(data) {
+                data.surrogate = false;
                 addToChatBox(data);
             },
 
@@ -200,12 +213,32 @@ function getChatSinceLastCheck(completedCallback) {
     });
 }
 
+function postSurrogate(text, cid) {
+    var ts = Date.now();
+
+    addToChatBox(
+        [{
+            timestamp: ts,
+            userId: userid,
+            user: {username: appUserName},
+            message: text,
+            surrogate: true
+        }]
+    );
+
+    return generateChatItemId(conversationId, ts, userid);
+}
+
 function sendChat() {
     var text = $("#btn-input").val();
     if (text.trim() == '') return;
 
     $("#btn-input").val('');
     var cid = conversationId;
+
+    //first, post up a surrogate chat message so that the
+    //message post delay isn't jarring to the user
+    var surrogateStamp = postSurrogate(text, cid);
 
     $.ajax({
         type: "POST",
@@ -215,9 +248,11 @@ function sendChat() {
         data: JSON.stringify({"chatText": text, "conversationId": cid}),
         success:
             function(data) {
-                if (data.status == "ok") {
+                //update the surrogate id
+                var itemId = generateChatItemId(conversationId, data.timestamp,
+                    userid);
 
-                }
+                $("#" + surrogateStamp).attr("id", itemId);
 
                 //once we have posted, schedule an immediate pull
                 //to retrieve our message right away
@@ -500,7 +535,7 @@ $(document).ready(function() {
             success:
                 function(data) {
                 },
-                
+
             error:
                 function(xhr, textStatus, error) {
                     notifyChatEvent("Message failed to send");

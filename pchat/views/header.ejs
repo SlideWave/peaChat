@@ -36,6 +36,7 @@
         var conversationId = 0;
     <% if (locals.session) { %>
         var userid = '<%= locals.session.userId %>';
+        var appUserName = '<%= locals.username %>';
         var openChats = <%- JSON.stringify(openChats) %>;
     <% } else { %>
         var openChats = [];
