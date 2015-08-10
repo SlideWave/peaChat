@@ -214,14 +214,22 @@ function sendChat() {
         contentType: "application/json",
         data: JSON.stringify({"chatText": text, "conversationId": cid}),
         success:
-        function(data) {
-            //once we have posted, schedule an immediate pull
-            //to retrieve our message right away
-            if (pollTimeoutHandle != null) {
-                clearTimeout(pollTimeoutHandle);
-                pollTimeoutHandle = setTimeout(chatTimer, 1);
+            function(data) {
+                if (data.status == "ok") {
+
+                }
+
+                //once we have posted, schedule an immediate pull
+                //to retrieve our message right away
+                if (pollTimeoutHandle != null) {
+                    clearTimeout(pollTimeoutHandle);
+                    pollTimeoutHandle = setTimeout(chatTimer, 1);
+                }
+            },
+        error:
+            function(xhr, textStatus, error) {
+                notifyChatEvent("Message failed to send");
             }
-        }
     });
 }
 
@@ -490,8 +498,13 @@ $(document).ready(function() {
             contentType: "application/json",
             data: JSON.stringify({"media": file, "conversationId": cid}),
             success:
-            function(data) {
-            }
+                function(data) {
+                },
+                
+            error:
+                function(xhr, textStatus, error) {
+                    notifyChatEvent("Message failed to send");
+                }
         });
     });
 });

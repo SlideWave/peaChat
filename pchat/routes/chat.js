@@ -179,7 +179,7 @@ router.post('/add', function(req, res) {
     var sess = req.session;
     var CLEANUP_CHANCE = 10; //1 in X chance a cleanup will run
 
-    var cleanupRoutine = function() {
+    var cleanupRoutine = function(timestamp) {
         if (Math.floor((Math.random() * CLEANUP_CHANCE) + 1) == CLEANUP_CHANCE) {
             ChatMessage.clearExpiredData(req.body.conversationId, function(err) {
                 if (err) {
@@ -188,36 +188,36 @@ router.post('/add', function(req, res) {
                     return;
                 }
 
-                res.json({"status": "ok"});
+                res.json({"status": "ok", "timestamp": timestamp});
             });
 
         } else {
-            res.json({"status": "ok"});
+            res.json({"status": "ok", "timestamp": timestamp});
         }
     }
 
     if (req.body.chatText) {
         ChatMessage.postMessage(req.body.conversationId, sess.userId, req.body.chatText,
-            function (err) {
+            function (err, timestamp) {
                 if (err) {
                     console.error(err);
                     res.status(500).send('Could not complete request');
                     return;
                 }
 
-                cleanupRoutine();
+                cleanupRoutine(timestamp);
             }
         );
     } else if (req.body.media) {
         ChatMessage.postMedia(req.body.conversationId, sess.userId, req.body.media,
-            function (err) {
+            function (err, timestamp) {
                 if (err) {
                     console.error(err);
                     res.status(500).send('Could not complete request');
                     return;
                 }
 
-                cleanupRoutine();
+                cleanupRoutine(timestamp);
             }
         );
     } else {

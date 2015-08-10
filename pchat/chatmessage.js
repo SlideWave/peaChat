@@ -122,7 +122,7 @@ ChatMessage.postMessage = function(conversationId, userId, message, callback) {
                     return;
                 }
 
-                callback(null);
+                callback(null, timestamp);
                 connection.end();
         });
     });
@@ -152,7 +152,7 @@ ChatMessage.postMedia = function(conversationId, userId, media, callback) {
                     return;
                 }
 
-                callback(null);
+                callback(null, timestamp);
                 connection.end();
         });
     });
