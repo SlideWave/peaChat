@@ -10,7 +10,7 @@ Responsive, privately hostable chat and IM software on node.js and mysql
 
 Layout created with bootstrap.
 
-Live demo at https://pchat.slidewave.com
+Live demo at https://chat.peachat.io
 
 ![Screenshot](/screenshot.png?raw=true)
 ![Screenshot](/screenshot2.png?raw=true)
