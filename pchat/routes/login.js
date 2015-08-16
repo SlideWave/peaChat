@@ -58,8 +58,8 @@ router.post('/register', function(req, res) {
             return;
     }
 
-    User.createUser(req.body.username, req.body.email, req.body.password,
-        function (err, newId) {
+    User.createUser(null, req.body.username, req.body.email, req.body.password,
+        function (err, newUser) {
             if (err) {
                 if (err.code == 'ER_DUP_ENTRY') {
                   //this username is already taken
@@ -75,7 +75,7 @@ router.post('/register', function(req, res) {
             // no error, assign the user to the default rooms if there are any
             if (config.defaultChatRooms && config.defaultChatRooms.length > 0) {
                 async.eachSeries(Object.keys(config.defaultChatRooms), function (idx, callback) {
-                    OpenChat.joinRoom(config.defaultChatRooms[idx], newId, callback)
+                    OpenChat.joinRoom(config.defaultChatRooms[idx], newUser.UUID, callback)
                 }, function done(err) {
                     if (err) {
                         console.error(err);
@@ -93,49 +93,29 @@ router.post('/register', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-    var connection = mysql.createConnection(config.siteDatabaseOptions);
-
-    connection.connect(function(err) {
+    User.authenticate(req.body.username, req.body.password, function(err, result) {
         if (err) {
-            console.error('error connecting: ' + err.stack);
+            connection.end();
             res.status(500).send('Could not complete request');
             return;
         }
 
-        User.findUserByName(req.body.username, function(err, result) {
-              if (err) {
-                  connection.end();
-                  res.status(500).send('Could not complete request');
-                  return;
-              }
+        if (! result) {
+            res.render('login', { title: 'Login', error: 'Login failed, try again' });
+            return;
+        }
 
-              if (! result) {
-                  res.render('login', { title: 'Login', error: 'Login failed, try again' });
-                  return;
-              }
+        var sess = req.session;
+        sess.userId = result.UUID;
+        sess.username = result.username;
 
-              var fullHash = User.calcPwHash(req.body.password, result.salt);
-
-              if (fullHash == result.pwHash) {
-                  var sess = req.session;
-                  sess.userId = result.UUID;
-                  sess.username = result.username;
-
-                  if (req.body.timezone) {
-                      sess.timezone = parseInt(req.body.timezone, "10");
-                      res.redirect('/');
-                  } else {
-                      sess.timezone = 0;
-                      res.redirect('/login/tzdetect');
-                  }
-
-              } else {
-                  //console.log(fullHash);
-                  res.render('login', { title: 'Login', error: 'Login failed, try again' });
-              }
-
-              connection.end();
-        });
+        if (req.body.timezone) {
+            sess.timezone = parseInt(req.body.timezone, "10");
+            res.redirect('/');
+        } else {
+            sess.timezone = 0;
+            res.redirect('/login/tzdetect');
+        }
     });
 });
 

@@ -29,4 +29,14 @@ config.imageRetentionPeriod = 172800000; //48 hrs in ms
  */
 config.defaultChatRooms = ['Welcome Chat'];
 
+config.plugins = {};
+
+/**
+ * User identity can be managed by an external provider. You can specify
+ * the module that will load user identity information
+ */
+
+// identity-demo is a module for demonstrating how to create an identity plugin
+//config.plugins['identity'] = './plugins/identity-demo.js';
+
 module.exports = config;
