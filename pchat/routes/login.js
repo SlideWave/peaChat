@@ -9,8 +9,11 @@ var async = require('async');
 var User = require('../user');
 var OpenChat = require('../openchat');
 
+var DEFAULT_REGISTRATION_URL = '/login/register';
+
 router.get('/', function(req, res) {
-    res.render('login', { title: 'Login', pageScript: "login.page.js" });
+    res.render('login', { title: 'Login', pageScript: "login.page.js",
+                            registrationURL: config.registrationURL });
 });
 
 router.get('/out', function(req, res) {
@@ -31,6 +34,11 @@ router.post('/tzdetect', function(req, res) {
 });
 
 router.get('/register', function(req, res) {
+    if (config.registrationURL != DEFAULT_REGISTRATION_URL) {
+        res.status(404).send('Page not found');
+        return;
+    }
+
     var sess = req.session;
 
     sess.timezone = parseInt(req.body.timezone, "10");
@@ -48,6 +56,11 @@ router.get('/register', function(req, res) {
 });
 
 router.post('/register', function(req, res) {
+    if (config.registrationURL != DEFAULT_REGISTRATION_URL) {
+        res.status(404).send('Page not found');
+        return;
+    }
+    
     var sess = req.session;
 
     if (String.isEmpty(req.body.username) ||

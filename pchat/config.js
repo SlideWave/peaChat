@@ -39,4 +39,13 @@ config.plugins = {};
 // identity-demo is a module for demonstrating how to create an identity plugin
 //config.plugins['identity'] = './plugins/identity-demo.js';
 
+
+/**
+ * If you are supplying external identity, you probably want to change
+ * the registration link
+ */
+config.registrationURL = '/login/register';
+
+
+
 module.exports = config;
