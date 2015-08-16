@@ -19,7 +19,7 @@ Live demo at https://chat.peachat.io
 ## Typical setup:
 
 * Have a MySQL instance handy
-* git clone https://github.com/SlideWave/pchat.git
+* git clone https://github.com/SlideWave/peaChat.git
 * npm install
 * Go to the pchat directory and edit config.js for your environment specifying your mysql credentials
 and if necessary the full local path to the upload directory (required when using certain init scripts)
