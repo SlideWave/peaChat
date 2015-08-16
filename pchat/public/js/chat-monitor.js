@@ -130,16 +130,16 @@ ChatMonitor.checkConversations = function(finishedCallback) {
             });
         },
         function (newChats, updateList, callback) {
-            for (var i = 0, len=newChats.length; i < len; i++) {
+            for (var i = 0; i < newChats.length; i++) {
                 var newChat = newChats[i];
-                for (var j=0, len=ChatMonitor.newChatObservers.length; j < len; j++) {
+                for (var j=0; j < ChatMonitor.newChatObservers.length; j++) {
                     (ChatMonitor.newChatObservers[j])(newChat);
                 }
             }
 
-            for (var i = 0, len=updateList.length; i < len; i++) {
+            for (var i = 0; i < updateList.length; i++) {
                 var updated = updateList[i];
-                for (var j = 0, len=ChatMonitor.chatUpdatedObservers.length; j < len; j++) {
+                for (var j = 0; j < ChatMonitor.chatUpdatedObservers.length; j++) {
                     (ChatMonitor.chatUpdatedObservers[j])(updated);
                 }
             }
