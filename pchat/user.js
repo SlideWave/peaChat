@@ -86,20 +86,32 @@ User.mapUserQuery = function(sql, params, assoc, callback) {
 
 /**
  * Given a list of user IDs, returns a list of User objects
+ * from our local database
  */
-User.resolveUsers = function(userList, callback) {
-    if (userList.length == 0) {
+User._resolveUsersInternal = function(userIdList, callback) {
+    User.mapUserQuery(
+        User.SELECT_LIST + 'FROM users WHERE user_id IN (?);',
+        [userIdList], true, callback);
+}
+
+/**
+ * Given a list of user IDs, returns a list of User objects
+ */
+User.resolveUsers = function(userIdList, callback) {
+    if (userIdList.length == 0) {
         callback(null, {});
         return;
     }
 
     if (identityPlugin) {
-        
+        identityPlugin.findUsersById(userIdList, function(err, remoteUsers) {
+            User._resolveUsersInternal(userIdList, function(err, localUsers) {
+
+            });
+        });
 
     } else {
-        User.mapUserQuery(
-            User.SELECT_LIST + 'FROM users WHERE user_id IN (?);',
-            [userList], true, callback);
+        User._resolveUsersInternal(userIdList, callback);
     }
 
 }
@@ -111,7 +123,7 @@ User.resolveUsers = function(userList, callback) {
 User._resolveLocalUserOrCreate = function(user, callback) {
     // we got something back from the plugin
     // now lets fill out the rest of the data from our sources
-    User.resolveUserInternal(user.UUID, function (err, localUser) {
+    User._resolveUserInternal(user.UUID, function (err, localUser) {
        if (err) {
            callback(err);
            return;
@@ -166,11 +178,11 @@ User.resolveUser = function(userId, callback) {
             User._resolveLocalUserOrCreate(user, callback);
         });
     } else {
-        User.resolveUserInternal(userId, callback);
+        User._resolveUserInternal(userId, callback);
     }
 }
 
-User.resolveUserInternal = function(userId, callback) {
+User._resolveUserInternal = function(userId, callback) {
     User.mapUserQuery(
       User.SELECT_LIST + 'FROM users WHERE user_id = ?;',
       userId, false, function (err, result) {
