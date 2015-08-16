@@ -104,26 +104,58 @@ User.resolveUsers = function(userIdList, callback) {
         return;
     }
 
+    console.info(userIdList);
+
     if (identityPlugin) {
         identityPlugin.findUsersById(userIdList, function(err, remoteUsers) {
             User._resolveUsersInternal(userIdList, function(err, localUsers) {
+                console.info(remoteUsers);
+                console.info(localUsers);
+                console.info(Object.keys(remoteUsers));
+
                 //now find the difference in what the identity plugin has
                 //resolved vs local. these will be local users that need
                 //to be created
                 var missingLocals = [];
-                for (key in Object.keys(remoteUsers)) {
+                for (var key in Object.keys(remoteUsers)) {
+                    console.info(key);
                     if (!(key in localUsers)) {
+                        console.error("local " + remoteUsers[key]);
                         missingLocals.push(remoteUsers[key]);
+                    } else {
+                        localUsers[key].absorbIdentity(remoteUsers[key]);
                     }
                 }
 
+                var newUsers = {};
                 //create the users
-                async.eachSeries(missingLocals, function iterator(key, callback) {
+                async.eachSeries(missingLocals, function iterator(key, eachCallback) {
                     var u = missingLocals[key];
                     var pw = User._fillRemoteMissingFieldsAndGeneratePassword(u);
 
                     User.createUser(u.UUID, u.username, u.email, pw, function(err, user) {
-                        
+                        if (err) {
+                            eachCallback(err);
+                            return;
+                        }
+
+                        newUsers[u.UUID] = user;
+                        eachCallback();
+
+                    }, function done(err) {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+
+                        //combine the new local users with the remote data
+                        //and add them to the list for return
+                        for (key in Object.keys(newUsers)) {
+                            newUsers[key].absorbIdentity(remoteUsers[key]);
+                            localUsers[key] = newUsers[key];
+                        }
+
+                        callback(null, localUsers);
                     });
                 });
             });

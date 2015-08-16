@@ -130,17 +130,17 @@ ChatMonitor.checkConversations = function(finishedCallback) {
             });
         },
         function (newChats, updateList, callback) {
-            for (var key in Object.keys(newChats)) {
-                var newChat = newChats[key];
-                for (var i=0, len=ChatMonitor.newChatObservers.length; i < len; i++) {
-                    (ChatMonitor.newChatObservers[i])(newChat);
+            for (var i = 0, len=newChats.length; i < len; i++) {
+                var newChat = newChats[i];
+                for (var j=0, len=ChatMonitor.newChatObservers.length; j < len; j++) {
+                    (ChatMonitor.newChatObservers[j])(newChat);
                 }
             }
 
-            for (var key in Object.keys(updateList)) {
-                var updated = updateList[key];
-                for (var i=0, len=ChatMonitor.chatUpdatedObservers.length; i < len; i++) {
-                    (ChatMonitor.chatUpdatedObservers[i])(updated);
+            for (var i = 0, len=updateList.length; i < len; i++) {
+                var updated = updateList[i];
+                for (var j = 0, len=ChatMonitor.chatUpdatedObservers.length; j < len; j++) {
+                    (ChatMonitor.chatUpdatedObservers[j])(updated);
                 }
             }
 
@@ -166,7 +166,7 @@ function scheduleCheckTimer() {
 $(document).ready(function() {
     //when we first load, retrieve the current timestamp for each
     //chat that we know is open
-    for (var i in Object.keys(openChats)) {
+    for (var i = 0, len = openChats.length; i < len; i++) {
         var chat = openChats[i];
 
         ChatMonitor.knownChats[chat.conversationId] = {chatData: chat, timestamp: 0};

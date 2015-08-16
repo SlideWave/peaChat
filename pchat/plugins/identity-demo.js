@@ -1,26 +1,27 @@
 var IdentityDemo = function() {
 }
 
-IdentityDemo._staticUser = {UUID: "00000000-0000-0000-0000-000000000000",
-                            username: "Identity Demo"};
-
 IdentityDemo.authenticate = function(username, password, callback) {
-    callback(null, IdentityDemo._staticUser);
+    callback(null, {UUID: "00000000-0000-0000-0000-000000000000",
+                    username: "Identity Demo"});
 }
 
 IdentityDemo.findUserByName = function(username, callback) {
-    callback(null, IdentityDemo._staticUser);
+    callback(null, {UUID: "00000000-0000-0000-0000-000000000000",
+                    username: username});
 }
 
 IdentityDemo.findUserById = function(userId, callback) {
-    callback(null, IdentityDemo._staticUser);
+    callback(null, {UUID: userId,
+                    username: "Identity Demo"});
 }
 
 IdentityDemo.findUsersById = function(userIdList, callback) {
     var retUsers = {};
 
     for (var i = 0, len = userIdList.length; i < len; i++) {
-        retUsers[i] = IdentityDemo._staticUser;
+        retUsers[userIdList[i]] = {UUID: userIdList[i],
+                                    username: "Identity Demo"};
     }
 
     callback(null, retUsers);
