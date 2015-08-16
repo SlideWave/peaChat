@@ -13,7 +13,7 @@ IdentityDemo.findUserByName = function(username, callback) {
 
 IdentityDemo.findUserById = function(userId, callback) {
     callback(null, {UUID: userId,
-                    username: "Identity Demo"});
+                    username: "Identity Demo " + userId});
 }
 
 IdentityDemo.findUsersById = function(userIdList, callback) {
@@ -21,7 +21,7 @@ IdentityDemo.findUsersById = function(userIdList, callback) {
 
     for (var i = 0, len = userIdList.length; i < len; i++) {
         retUsers[userIdList[i]] = {UUID: userIdList[i],
-                                    username: "Identity Demo"};
+                                    username: "Identity Demo " + userIdList[i]};
     }
 
     callback(null, retUsers);

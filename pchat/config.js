@@ -37,6 +37,6 @@ config.plugins = {};
  */
 
 // identity-demo is a module for demonstrating how to create an identity plugin
-config.plugins['identity'] = './plugins/identity-demo.js';
+//config.plugins['identity'] = './plugins/identity-demo.js';
 
 module.exports = config;
