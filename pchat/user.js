@@ -4,6 +4,7 @@ var config = require('./config');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
 var md5 = require('MD5');
+var async = require('async');
 
 //load the identity overrider
 var identityPlugin = null;
@@ -106,7 +107,25 @@ User.resolveUsers = function(userIdList, callback) {
     if (identityPlugin) {
         identityPlugin.findUsersById(userIdList, function(err, remoteUsers) {
             User._resolveUsersInternal(userIdList, function(err, localUsers) {
+                //now find the difference in what the identity plugin has
+                //resolved vs local. these will be local users that need
+                //to be created
+                var missingLocals = [];
+                for (key in Object.keys(remoteUsers)) {
+                    if (!(key in localUsers)) {
+                        missingLocals.push(remoteUsers[key]);
+                    }
+                }
 
+                //create the users
+                async.eachSeries(missingLocals, function iterator(key, callback) {
+                    var u = missingLocals[key];
+                    var pw = User._fillRemoteMissingFieldsAndGeneratePassword(u);
+
+                    User.createUser(u.UUID, u.username, u.email, pw, function(err, user) {
+                        
+                    });
+                });
             });
         });
 
@@ -114,6 +133,17 @@ User.resolveUsers = function(userIdList, callback) {
         User._resolveUsersInternal(userIdList, callback);
     }
 
+}
+
+User._fillRemoteMissingFieldsAndGeneratePassword = function(user) {
+    if (typeof user.email === "undefined") {
+        user.email = user.UUID;
+    }
+
+    //generate a random password. this will never be used anyways
+    //and is only to secure things in the event that someone
+    //turns off the identity plugin
+    return randomAsciiString(32);
 }
 
 /**
@@ -137,14 +167,7 @@ User._resolveLocalUserOrCreate = function(user, callback) {
 
        //if we got here, we didn't find a local user
        //create a user based on what we got back from the identity plugin
-       if (typeof user.email === "undefined") {
-           user.email = user.UUID;
-       }
-
-       //generate a random password. this will never be used anyways
-       //and is only to secure things in the event that someone
-       //turns off the identity plugin
-       var pw = randomAsciiString(32);
+       var pw = User._fillRemoteMissingFieldsAndGeneratePassword(user);
 
        User.createUser(user.UUID, user.username, user.email, pw,
            function (err, newLocalUser) {
