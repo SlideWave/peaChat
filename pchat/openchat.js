@@ -1,8 +1,9 @@
 var mysql = require('mysql');
 var session = require('express-session');
 var config = require('./config');
-var User = require('./user');
 var md5 = require('MD5');
+
+//NOTE: DO NOT require('./user') HERE. User already depends on openchat
 
 var OpenChat = function(conversationId, userId, title, type, checkpoint, partnerId) {
     this.conversationId = conversationId;

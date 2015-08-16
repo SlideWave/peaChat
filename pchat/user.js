@@ -6,6 +6,8 @@ var uuid = require('node-uuid');
 var md5 = require('MD5');
 var async = require('async');
 
+var OpenChat = require('./openchat');
+
 //load the identity overrider
 var identityPlugin = null;
 if ('identity' in config.plugins) {
@@ -257,22 +259,39 @@ User._resolveUserInternal = function(userId, callback) {
 }
 
 User.findUserByName = function(userName, callback) {
-  User.mapUserQuery(
-    User.SELECT_LIST + 'FROM users WHERE username = ?;',
-    [userName], false,
-        function (err, result) {
+    if (identityPlugin) {
+        identityPlugin.findUserByName(userName, function(err, user) {
             if (err) {
-                callback(err, null);
+                callback(err);
                 return;
             }
 
-            if (result.length > 0) {
-                callback(null, result[0]);
-            } else {
+            if (!user) {
                 callback(null, null);
+                return;
             }
-        }
-    );
+
+            User._resolveLocalUserOrCreate(user, callback);
+        });
+
+    } else {
+        User.mapUserQuery(
+            User.SELECT_LIST + 'FROM users WHERE username = ?;',
+            [userName], false,
+                function (err, result) {
+                    if (err) {
+                        callback(err, null);
+                        return;
+                    }
+
+                    if (result.length > 0) {
+                        callback(null, result[0]);
+                    } else {
+                        callback(null, null);
+                    }
+                }
+        );
+    }
 }
 
 /** Sync */
@@ -332,13 +351,33 @@ User.createUser = function(userId, userName, email, password, callback) {
                 connection.end();
 
                 if (err) {
-                    console.error(err);
+                    console.trace(err);
                     callback(err, null);
                     return;
                 }
 
-                callback(null, new User(newId, userName, email, salt, pwHash,
-                    null, null));
+                // no error, assign the user to the default rooms if there are any
+                if (config.defaultChatRooms && config.defaultChatRooms.length > 0) {
+                    async.eachSeries(Object.keys(config.defaultChatRooms),
+                        function (idx, seriesCallback) {
+                            OpenChat.joinRoom(config.defaultChatRooms[idx],
+                                newId, seriesCallback);
+
+                        }, function done(err) {
+                            if (err) {
+                                callback(err);
+                                return;
+                            }
+
+                            callback(null, new User(newId, userName, email, salt,
+                                pwHash, null, null));
+                        }
+                    );
+
+                } else {
+                    callback(null, new User(newId, userName, email, salt,
+                        pwHash, null, null));
+                }
             }
         );
     });

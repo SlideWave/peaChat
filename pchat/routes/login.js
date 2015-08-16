@@ -72,22 +72,7 @@ router.post('/register', function(req, res) {
                 return;
             }
 
-            // no error, assign the user to the default rooms if there are any
-            if (config.defaultChatRooms && config.defaultChatRooms.length > 0) {
-                async.eachSeries(Object.keys(config.defaultChatRooms), function (idx, callback) {
-                    OpenChat.joinRoom(config.defaultChatRooms[idx], newUser.UUID, callback)
-                }, function done(err) {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send('Could not complete request');
-                    } else {
-                        res.redirect('/login');
-                    }
-                }
-                );
-            } else {
-                res.redirect('/login');
-            }
+            res.redirect('/login');
         }
     );
 });
