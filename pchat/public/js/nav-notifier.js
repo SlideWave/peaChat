@@ -2,25 +2,6 @@
 // Changes the navigation to indicate when new messages come in
 //
 
-/*
-<li class="nav-divider"></li>
-<% for (var i=0, len=openChats.length; i < len; i++) {
-        var chat = openChats[i];
-
-        var cls;
-        if (chat.type == OpenChat.IM) {
-            cls = "fa fa-envelope-o fa-fw";
-        } else {
-            cls = "fa fa-group fa-fw";
-        }
-%>
-<li>
-    <a href="/chat/<%= chat.conversationId%>"><i class="<%=cls%>"></i> <%= chat.title %></a>
-</li>
-<% } %>
-<li class="nav-divider" id="convo-div"></li>
-*/
-
 function navNotifyNewChat(chat) {
     var IM = 0;
 
