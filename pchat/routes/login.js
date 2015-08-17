@@ -60,7 +60,7 @@ router.post('/register', function(req, res) {
         res.status(404).send('Page not found');
         return;
     }
-    
+
     var sess = req.session;
 
     if (String.isEmpty(req.body.username) ||
@@ -99,7 +99,11 @@ router.post('/', function(req, res) {
         }
 
         if (! result) {
-            res.render('login', { title: 'Login', error: 'Login failed, try again' });
+            res.render('login', {   title: 'Login',
+                                    error: 'Login failed, try again',
+                                    registrationURL: config.registrationURL,
+                                    pageScript: "login.page.js",
+                                    });
             return;
         }
 
