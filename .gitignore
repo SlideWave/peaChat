@@ -2,3 +2,4 @@ pchat/node_modules/
 pchat/upload/
 .DS_Store
 pchat/public/images/media/*.*
+!pchat/public/images/media/placeholder.txt
