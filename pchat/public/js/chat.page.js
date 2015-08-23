@@ -337,7 +337,7 @@ function checkForActivityChange(force, callback) {
                         lastPartnerCheckin = data.lastseen;
                         lastActivityCheck = Date.now();
 
-                        if (changeType != CHANGE_NONE) {
+                        if (changeType != CHANGE_NONE || force) {
                             $("ul.chat").append(
                                 '<li class="' + liClass + ' clearfix chatmessage">' +
                                     '<div class="chat-body clearfix">' +
