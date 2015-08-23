@@ -249,17 +249,28 @@ function sendChat() {
         data: JSON.stringify({"chatText": text, "conversationId": cid}),
         success:
             function(data) {
-                //update the surrogate id
                 var itemId = generateChatItemId(conversationId, data.timestamp,
                     userid);
 
-                $("#" + surrogateStamp).attr("id", itemId);
+                //race condition, we may have already been pulling new messages
+                //when we started this post. if that is the case, we might
+                //already have this message in our list, check for this
+                //condition
+                if ($("#" + itemId).length) {
+                    //we already have the new message in our list.
+                    //delete the surrogate
+                    $("#" + surrogateStamp).remove();
 
-                //once we have posted, schedule an immediate pull
-                //to retrieve our message right away
-                if (pollTimeoutHandle != null) {
-                    clearTimeout(pollTimeoutHandle);
-                    pollTimeoutHandle = setTimeout(chatTimer, 1);
+                } else {
+                    //update the surrogate id
+                    $("#" + surrogateStamp).attr("id", itemId);
+
+                    //once we have posted, schedule an immediate pull
+                    //to retrieve our message right away
+                    if (pollTimeoutHandle != null) {
+                        clearTimeout(pollTimeoutHandle);
+                        pollTimeoutHandle = setTimeout(chatTimer, 1);
+                    }
                 }
             },
         error:
