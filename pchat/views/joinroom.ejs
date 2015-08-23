@@ -2,9 +2,18 @@
 
     <div class="row">
         <div class="col-lg-12">
-              <form class="form-newroom" role="form" method="post">
-                <label for="inputRoom" class="sr-only">Room name</label>
-                <input name="roomname" type="text" id="inputRoom" class="form-control" placeholder="Room to join" autocorrect="off" required autofocus>
+              <form class="form-inline form-newroom" role="form" method="post">
+                <div class="form-group">
+                    <input name="roomname" type="text" id="inputRoom" class="form-control"
+                        placeholder="Room to join" autocorrect="off" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="public" id="inputPublic"required />
+                        Public (shows in list)
+                    </label>
+                </div>
 
                 <button class="btn btn-lg btn-primary btn-block" type="submit">OK</button>
               </form>
