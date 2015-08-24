@@ -136,6 +136,16 @@ router.get('/recent/:id', function(req, res) {
             }
 
             res.json(reordered);
+
+            //this is a very infrequent call, so if we get it in, also
+            //update the user's last seen time
+            User.updateLastSeenTimeToNowIfNecessary(
+                sess.userId, function (err) {
+                    if (err) {
+                        console.error(err);
+                    }
+                }
+            );
     });
 });
 
