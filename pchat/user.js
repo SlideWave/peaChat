@@ -472,6 +472,11 @@ User.authenticate = function(username, password, callback) {
                 return;
             }
 
+            if (!result) {
+                callback(null, null);
+                return;
+            }
+
             var fullHash = User.calcPwHash(password, result.salt);
             if (fullHash == result.pwHash) {
                 callback(null, result);
