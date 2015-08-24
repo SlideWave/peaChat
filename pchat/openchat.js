@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var session = require('express-session');
 var config = require('./config');
 var md5 = require('MD5');
+var async = require('async');
 
 //NOTE: DO NOT require('./user') HERE. User already depends on openchat
 
@@ -103,7 +104,7 @@ OpenChat.startIM = function(userA, userB, callback) {
     );
 }
 
-OpenChat.createNewChat = function(conversationId, userId, title, type, partnerId, callback) {
+OpenChat.createNewChat = function(conversationId, userId, title, public, type, partnerId, callback) {
     var connection = mysql.createConnection(config.siteDatabaseOptions);
 
     connection.connect(function(err) {
@@ -113,20 +114,44 @@ OpenChat.createNewChat = function(conversationId, userId, title, type, partnerId
             return;
         }
 
-        var sql = "INSERT INTO open_chats(user_id, conversation_id, title, type, partner_id) " +
-                  "VALUES(?, ?, ?, ?, ?);";
+        async.series([
+            function (callback) {
+                var sql = "INSERT INTO open_chats(user_id, conversation_id, title, type, partner_id) " +
+                          "VALUES(?, ?, ?, ?, ?);";
 
-        var query = connection.query(sql, [userId, conversationId, title, type, partnerId],
-            function(err, results) {
-                if (err) {
-                    connection.end();
-                    callback(err);
-                    return;
-                }
+                var query = connection.query(sql, [userId, conversationId, title, type, partnerId],
+                    function(err, results) {
+                        if (err) {
+                            connection.end();
+                            callback(err);
+                            return;
+                        }
 
-                callback(null);
-                connection.end();
+                        callback(null);
+                });
+            },
+
+            function (callback) {
+                var sql = "INSERT INTO public_chats(conversation_id, title, user_count) " +
+                          "VALUES(?, ?, 1) " +
+                          "ON DUPLICATE KEY UPDATE user_count = user_count + 1;";
+
+                var query = connection.query(sql, [conversationId, title],
+                    function(err, results) {
+                        if (err) {
+                            connection.end();
+                            callback(err);
+                            return;
+                        }
+
+                        callback(null);
+                        connection.end();
+                });
+            },
+        ], function done(err) {
+            callback(err);
         });
+
     });
 }
 
@@ -148,13 +173,13 @@ OpenChat.findChatInfo = function(userId, conversationId, callback) {
 /**
  * Adds the given user to a chat room
  */
-OpenChat.joinRoom = function(roomName, userId, callback) {
+OpenChat.joinRoom = function(roomName, public, userId, callback) {
     //hash as: md5(roomName)
     var convId = md5(roomName);
     var atitle = roomName;
 
     //create the new chat for the user
-    OpenChat.createNewChat(convId, userId, atitle, OpenChat.CHATROOM, null,
+    OpenChat.createNewChat(convId, userId, atitle, public, OpenChat.CHATROOM, null,
         function(err) {
             if (err && err.code != 'ER_DUP_ENTRY') { //we'll get dup if a user tries to start the same room twice
                 callback(err, null);
@@ -180,19 +205,59 @@ OpenChat.leaveChat = function(conversationId, userId, callback) {
             return;
         }
 
-        var sql = "DELETE FROM open_chats WHERE user_id = ? AND conversation_id = ?;";
+        async.series([
+            function (callback) {
+                var sql = "DELETE FROM open_chats WHERE user_id = ? AND conversation_id = ?;";
 
-        connection.query(sql, [userId, conversationId],
-            function(err, results) {
-                if (err) {
-                    connection.end();
-                    callback(err);
-                    return;
-                }
+                connection.query(sql, [userId, conversationId],
+                    function(err, results) {
+                        if (err) {
+                            connection.end();
+                            callback(err);
+                            return;
+                        }
 
-                callback(null);
-                connection.end();
+                        callback(null);
+                });
+            },
+
+            function (callback) {
+                var sql = "UPDATE public_chats SET user_count = user_count - 1 " +
+                            "WHERE conversation_id = ?;";
+
+                connection.query(sql, [conversationId],
+                    function(err, results) {
+                        if (err) {
+                            connection.end();
+                            callback(err);
+                            return;
+                        }
+
+                        callback(null);
+                });
+            },
+
+            function (callback) {
+                var sql = "DELETE FROM public_chats " +
+                            "WHERE conversation_id = ? AND user_count = 0;";
+
+                connection.query(sql, [conversationId],
+                    function(err, results) {
+                        if (err) {
+                            connection.end();
+                            callback(err);
+                            return;
+                        }
+
+                        callback(null);
+                });
+            },
+
+        ], function done(err) {
+            connection.end();
+            callback(err);
         });
+
     });
 }
 

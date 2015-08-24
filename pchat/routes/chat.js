@@ -99,14 +99,21 @@ router.get('/room/join', function(req, res) {
 router.post('/room/join', function(req, res) {
     var sess = req.session;
 
-    OpenChat.joinRoom(req.body.roomname, sess.userId, function(err, conversationId) {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Could not complete request');
-            return;
-        }
+    var pub = false;
+    if (typeof req.body.public !== "undefined") {
+        pub = true;
+    }
 
-        res.redirect('/chat/' + conversationId);
+    OpenChat.joinRoom(req.body.roomname, req.body.public,
+        sess.userId, function(err, conversationId) {
+
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
+
+            res.redirect('/chat/' + conversationId);
     });
 });
 
