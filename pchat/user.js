@@ -428,7 +428,7 @@ User.updateLastSeenTimeToNowIfNecessary = function(userId, callback) {
         var timestamp = Date.now();
         var twoMinutesAgo =  timestamp - (2 * 60 * 1000);
         var query = "UPDATE users SET last_seen = ? WHERE user_id = ? " +
-                        "AND last_seen <= ?;";
+                        "AND last_seen <= ? OR last_seen IS NULL;";
 
         connection.query(query, [timestamp, userId, twoMinutesAgo],
             function (err, results) {
