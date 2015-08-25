@@ -82,14 +82,14 @@ OpenChat.startIM = function(userA, userB, callback) {
     var btitle = "IM with " + userA.username;
 
     //create the new chat for both sides
-    OpenChat.createNewChat(convId, userA.UUID, atitle, OpenChat.IM, userB.UUID,
+    OpenChat.createNewChat(convId, userA.UUID, atitle, false, OpenChat.IM, userB.UUID,
         function(err) {
             if (err && err.code != 'ER_DUP_ENTRY') { //we'll get dup if a user tries to start the same IM twice
                 callback(err, null);
                 return;
             }
 
-            OpenChat.createNewChat(convId, userB.UUID, btitle, OpenChat.IM, userA.UUID,
+            OpenChat.createNewChat(convId, userB.UUID, btitle, false, OpenChat.IM, userA.UUID,
                 function(err) {
                     if (err && err.code != 'ER_DUP_ENTRY') {
                         callback(err);
