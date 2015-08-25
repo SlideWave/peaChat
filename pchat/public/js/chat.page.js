@@ -313,6 +313,9 @@ function checkForActivityChange(force, callback) {
                         var strongClass = 'pull-right';
 
                         var chageDesc;
+                        if (force) {
+                            changeDesc = data.name + " is active ";
+                        }
 
                         var MINUTES_TO_IDLE = 5;
 
