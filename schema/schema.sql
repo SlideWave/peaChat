@@ -48,3 +48,11 @@ CREATE TABLE `open_chats` (
   PRIMARY KEY (`user_id`,`conversation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `public_chats`;
+
+CREATE TABLE `public_chats` (
+  `conversation_id` char(32) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `user_count` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`conversation_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
