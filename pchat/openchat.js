@@ -192,6 +192,7 @@ OpenChat.joinRoom = function(roomName, public, userId, callback) {
     );
 }
 
+
 /**
  * Removes the given user from a chat
  */

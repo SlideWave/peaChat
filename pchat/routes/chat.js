@@ -3,6 +3,7 @@ var router = express.Router();
 var ChatMessage = require('../chatmessage');
 var OpenChat = require('../openchat');
 var User = require('../user');
+var PublicChat = require('../publicchat');
 
 /**
  * Returns the JSON summary of open chats for the given user
@@ -105,6 +106,26 @@ router.post('/room/join', function(req, res) {
     }
 
     OpenChat.joinRoom(req.body.roomname, req.body.public,
+        sess.userId, function(err, conversationId) {
+
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
+
+            res.redirect('/chat/' + conversationId);
+    });
+});
+
+/**
+ * Places the user in this session into the requested public room if they are not
+ * yet a participant, or redirects directly to the room if they are
+ */
+router.get('/tryroom/:name', function(req, res) {
+    var sess = req.session;
+
+    OpenChat.joinRoom(req.params.name, true,
         sess.userId, function(err, conversationId) {
 
             if (err) {
@@ -287,6 +308,26 @@ router.get('/timestamp/:id', function(req, res) {
         }
 
         res.json({"timestamp": timestamp});
+    });
+});
+
+router.get('/roomlist', function(req, res) {
+    var sess = req.session;
+
+    PublicChat.getPublicChats(function(err, chats) {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Could not complete request');
+            return;
+        }
+
+        res.render('roomlist',
+            {
+                title: 'Public Chats',
+                username: sess.username,
+                session: sess,
+                rooms: chats
+            });
     });
 });
 
