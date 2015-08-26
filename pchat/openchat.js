@@ -132,21 +132,28 @@ OpenChat.createNewChat = function(conversationId, userId, title, public, type, p
             },
 
             function (callback) {
-                var sql = "INSERT INTO public_chats(conversation_id, title, user_count) " +
-                          "VALUES(?, ?, 1) " +
-                          "ON DUPLICATE KEY UPDATE user_count = user_count + 1;";
+                if (public) {
+                    var sql = "INSERT INTO public_chats(conversation_id, title, user_count) " +
+                              "VALUES(?, ?, 1) " +
+                              "ON DUPLICATE KEY UPDATE user_count = user_count + 1;";
 
-                var query = connection.query(sql, [conversationId, title],
-                    function(err, results) {
-                        if (err) {
+                    var query = connection.query(sql, [conversationId, title],
+                        function(err, results) {
+                            if (err) {
+                                connection.end();
+                                callback(err);
+                                return;
+                            }
+
+                            callback(null);
                             connection.end();
-                            callback(err);
-                            return;
-                        }
+                    });
+                    
+                } else {
+                    callback(null);
+                    connection.end();
+                }
 
-                        callback(null);
-                        connection.end();
-                });
             },
         ], function done(err) {
             callback(err);
