@@ -13,8 +13,6 @@ var ChatMessage = function(conversationId, timestamp, userId, message, media) {
     this.user = null;
 }
 
-ChatMessage.retentionDays = 1;
-
 ChatMessage.mapChatQuery = function(sql, params, callback) {
     var connection = mysql.createConnection(config.siteDatabaseOptions);
 
@@ -68,16 +66,16 @@ ChatMessage.getRecentChatMessages = function(conversationId, userId, callback) {
     ChatMessage.mapChatQuery(
         "SELECT * FROM chat " +
         "WHERE conversation_id = ? " +
-          "AND timestamp >= UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? DAY)) * 1000 " +
+          "AND timestamp >= UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? HOUR)) * 1000 " +
           "AND timestamp > (SELECT checkpoint FROM open_chats WHERE user_id = ? AND conversation_id = ?) " +
         "ORDER BY timestamp DESC LIMIT 100",
-        [conversationId, ChatMessage.retentionDays, userId, conversationId],
+        [conversationId, config.chatRetentionHours, userId, conversationId],
         function(err, results) {
             if (err || results.length > 0) {
                 callback(err, results);
 
             } else {
-                //there were no entries in the last day,
+                //there were no entries in the last interval,
                 //just grab the last one and send it back to establish the
                 //most recent ID
                 ChatMessage.mapChatQuery(
@@ -172,9 +170,9 @@ ChatMessage.clearExpiredData = function(conversationId, callback) {
         }
 
         var sql = "DELETE FROM chat WHERE conversation_id = ? " +
-                    "AND timestamp < UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? DAY)) * 1000";
+                    "AND timestamp < UNIX_TIMESTAMP(DATE_SUB(UTC_TIMESTAMP(), INTERVAL ? HOUR)) * 1000";
 
-        connection.query(sql, [conversationId, ChatMessage.retentionDays],
+        connection.query(sql, [conversationId, config.chatRetentionHours],
             function(err, results) {
                 if (err) {
                     connection.end();
