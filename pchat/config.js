@@ -22,7 +22,7 @@ config.httpsOptions = {
 config.uploadDir = './upload/';
 config.maxUploadSize = 4194304;
 config.imageRetentionPeriod = 48 * (60 * 60 * 1000); //48 hrs
-config.chatRetentionHours = 48 * (60 * 60 * 1000); //48 hrs
+config.chatRetentionHours = 48; //48 hrs
 
 /**
  * Default chat rooms can be specified here that all new users
