@@ -159,7 +159,7 @@ router.post('/upload', function(req, res) {
                 } else if (rotFlag == 6) {
                     rotDeg = 90;
                 } else if (rotFlag == 8) {
-                    rotDeg == 270;
+                    rotDeg = 270;
                 }
 
                 if (scale < 1.0) {
