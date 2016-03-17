@@ -17,7 +17,7 @@ var THUMB_WIDTH = 50;
 var MAX_DIMENSION = 2048;
 
 router.post('/', upload.single('file'), function(req, res) {
-    console.error(req.file);
+    //console.error(req.file);
 
     //make sure that we have a single file and it is the correct type
     if (req.file == null || req.file.truncated) {
