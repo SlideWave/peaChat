@@ -30,7 +30,6 @@ if (process.argv.length > 2) {
 }
 
 var express = require('express');
-var multer = require('multer');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -55,16 +54,6 @@ String.isEmpty = function(str) {
 }
 
 var app = express();
-
-app.use(
-    multer({
-        dest: config.uploadDir,
-        limits: {
-            files: 1,
-            fileSize: config.maxUploadSize
-        }
-    })
-);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

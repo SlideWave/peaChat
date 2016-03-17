@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 var session = require('express-session');
 var config = require('./config');
-var md5 = require('MD5');
+var md5 = require('md5');
 var async = require('async');
 
 //NOTE: DO NOT require('./user') HERE. User already depends on openchat

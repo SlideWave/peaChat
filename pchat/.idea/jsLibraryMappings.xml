@@ -2,5 +2,6 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$" libraries="{pchat node_modules}" />
+    <file url="PROJECT" libraries="{ejs-DefinitelyTyped, express-DefinitelyTyped, node-DefinitelyTyped}" />
   </component>
 </project>

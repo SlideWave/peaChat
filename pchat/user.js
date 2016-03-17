@@ -3,7 +3,7 @@ var session = require('express-session');
 var config = require('./config');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
-var md5 = require('MD5');
+var md5 = require('md5');
 var async = require('async');
 
 var OpenChat = require('./openchat');

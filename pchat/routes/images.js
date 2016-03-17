@@ -5,37 +5,46 @@ var config = require('../config');
 var lwip = require('lwip');
 var ExifImage = require('exif').ExifImage;
 var fs = require('fs');
+var multer = require('multer');
+var upload = multer({dest: config.uploadDir,
+    limits: {
+        files: 1,
+        fileSize: config.maxUploadSize
+    }
+});
 
 var THUMB_WIDTH = 50;
 var MAX_DIMENSION = 2048;
 
-router.post('/upload', function(req, res) {
+router.post('/', upload.single('file'), function(req, res) {
+    console.error(req.file);
+
     //make sure that we have a single file and it is the correct type
-    if (req.files == null || !req.files.uploadfile || req.files.uploadfile.truncated) {
+    if (req.file == null || req.file.truncated) {
         res.status(400).send();
-        console.error('Invalid number or size of uploaded files ' + JSON.stringify(req.files));
+        console.error('Invalid number or size of uploaded files ' + JSON.stringify(req.file));
         return;
     }
 
-    if (req.files.uploadfile.mimetype != "image/jpeg" &&
-        req.files.uploadfile.mimetype != "image/png") {
+    if (req.file.mimetype != "image/jpeg" &&
+        req.file.mimetype != "image/png") {
 
         res.status(400).send();
         console.error('Invalid file type ' + req.files.uploadfile.mimetype);
         return;
     }
 
-    var inFile = req.files.uploadfile;
+    var inFile = req.file;
     var exifFunc;
     var shortType;
 
-    if (req.files.uploadfile.mimetype == "image/jpeg") {
+    if (inFile.mimetype == "image/jpeg") {
         shortType = "jpg";
     } else {
         shortType = "png";
     }
 
-    if (req.files.uploadfile.mimetype == "image/jpeg") {
+    if (inFile.mimetype == "image/jpeg") {
         exifFunc = function(callback) {
             try {
                 new ExifImage({image: inFile.path}, callback);
@@ -112,8 +121,8 @@ router.post('/upload', function(req, res) {
                         var baseName = path.basename(inFile.path, path.extname(inFile.path));
                         var profilesDir
                             = path.normalize(
-                                path.dirname(inFile.path) + '/../public/images/media'
-                            );
+                            path.dirname(inFile.path) + '/../public/images/media'
+                        );
 
                         var bigName = path.join(profilesDir, baseName + ".jpg");
                         var thumbName = path.join(profilesDir, baseName + "-t.jpg");
