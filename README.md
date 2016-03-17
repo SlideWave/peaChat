@@ -13,6 +13,8 @@ Layout created with bootstrap.
 
 Live demo at https://chat.peachat.io
 
+Created and maintained by SlideWave, LLC - https://www.slidewave.com
+
 ![Screenshot](/screenshot.png?raw=true)
 ![Screenshot](/screenshot2.png?raw=true)
 
