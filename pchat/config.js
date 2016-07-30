@@ -7,7 +7,8 @@ config.siteDatabaseOptions = {
     port: 3306,
     user: 'root',
     password: '',
-    database: 'pchat'
+    database: 'pchat',
+    charset: 'utf8mb4'
 };
 
 config.sessionSecret = 'changeMe';

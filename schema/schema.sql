@@ -7,7 +7,7 @@ CREATE TABLE `chat` (
   `conversation_id` char(32) NOT NULL,
   `timestamp` bigint(20) unsigned NOT NULL,
   `user_id` char(36) NOT NULL,
-  `message` text,
+  `message` text CHARACTER SET utf8mb4,
   `media` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`conversation_id`,`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -41,7 +41,7 @@ DROP TABLE IF EXISTS `open_chats`;
 CREATE TABLE `open_chats` (
   `user_id` char(36) NOT NULL,
   `conversation_id` char(32) NOT NULL,
-  `title` varchar(128) NOT NULL,
+  `title` varchar(128) CHARACTER SET utf8mb4 NOT NULL,
   `type` tinyint(4) NOT NULL,
   `checkpoint` bigint(20) NOT NULL DEFAULT '0',
   `partner_id` char(36) DEFAULT NULL,
