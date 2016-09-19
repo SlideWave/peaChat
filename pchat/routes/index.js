@@ -6,7 +6,7 @@ var moment = require('moment-timezone');
 router.get('/', function(req, res) {
     var sess = req.session;
 
-    res.render('index', { title: 'Welcome!', session: sess, username: sess.username });
+    res.render('index', { title: 'Welcome!'});
 });
 
 module.exports = router;

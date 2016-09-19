@@ -32,15 +32,20 @@
 
     <link href="/css/dropzone.css" rel="stylesheet">
 
+    <script src="/js/jwt-decode.min.js"></script>
+    
     <script>
         var conversationId = 0;
-    <% if (locals.session) { %>
-        var userid = '<%= locals.session.userId %>';
-        var appUserName = '<%= locals.username %>';
-        var openChats = <%- JSON.stringify(openChats) %>;
-    <% } else { %>
+        var token = localStorage.getItem("token");
+
+        if (token) {
+            var decoded = jwt_decode(token);
+
+            var userid = decoded.userId;
+            var appUserName = decoded.username;
+        }
+
         var openChats = [];
-    <% } %>
     </script>
 </head>
 
@@ -58,11 +63,14 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="/">
-                    <% if (locals.username) { %>
-                        <%= username %>'s peaChat
-                    <% } else { %>
-                        SlideWave peaChat
-                    <% } %></a>
+                    <script type="text/javascript">
+                        if (appUserName) {
+                            document.write(appUserName + "'s peaChat");
+                        } else {
+                            document.write("SlideWave peaChat");
+                        }
+                    </script>
+                </a>
             </div>
             <!-- /.navbar-header -->
 
