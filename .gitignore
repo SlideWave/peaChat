@@ -3,6 +3,8 @@ pchat/upload/
 .DS_Store
 pchat/public/images/media/*.*
 !pchat/public/images/media/placeholder.txt
+pcha/config.js
+
 
 # Don't include the project at all
 .idea/
