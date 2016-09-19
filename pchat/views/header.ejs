@@ -33,7 +33,7 @@
     <link href="/css/dropzone.css" rel="stylesheet">
 
     <script src="/js/jwt-decode.min.js"></script>
-    
+
     <script>
         var conversationId = 0;
         var token = localStorage.getItem("token");
@@ -74,7 +74,6 @@
             </div>
             <!-- /.navbar-header -->
 
-            <% if (locals.username) { %>
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
@@ -95,7 +94,7 @@
                             <a href="/chat/roomlist"><i class="fa fa-map-signs fa-fw"></i> Public Chat List</a>
                         </li>
                         <li class="nav-divider"></li>
-                        <% for (var i=0, len=openChats.length; i < len; i++) {
+                        for (var i=0, len=openChats.length; i < len; i++) {
                                 var chat = openChats[i];
 
                                 var cls;
@@ -104,11 +103,9 @@
                                 } else {
                                     cls = "fa fa-group fa-fw";
                                 }
-                        %>
                         <li>
-                            <a href="/chat/<%= chat.conversationId%>"><i class="<%=cls%>" id="convo-icon-<%= chat.conversationId%>"></i> <%= chat.title %></a>
+                            <a href="/chat/"><i class="cls" id="convo-icon-"></i></a>
                         </li>
-                        <% } %>
                         <li class="nav-divider" id="convo-div"></li>
                         <li>
                             <a href="/login/out"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
@@ -119,7 +116,6 @@
                 <!-- /.sidebar-collapse -->
             </div>
             <!-- /.navbar-static-side -->
-            <% } %>
         </nav>
 
         <div id="page-wrapper">
