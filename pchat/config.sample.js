@@ -11,7 +11,7 @@ config.siteDatabaseOptions = {
     charset: 'utf8mb4'
 };
 
-config.sessionSecret = 'changeMe';
+config.tokenSecret = 'changeMe';
 
 /*
 config.httpsOptions = {

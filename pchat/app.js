@@ -36,8 +36,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var session = require('express-session');
-var SessionStore = require('express-mysql-session');
 var config = require('./config');
 var OpenChat = require('./openchat');
 
@@ -71,14 +69,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1) // trust first proxy
 }
-// session handler
-app.use(session({
-    key: 'pchat_sess',
-    secret: config.sessionSecret,
-    store: new SessionStore(config.siteDatabaseOptions),
-    resave: true,
-    saveUninitialized: true
-}));
 
 var routes = require('./routes/index');
 var login = require('./routes/login');
@@ -87,25 +77,6 @@ var profile = require('./routes/profile');
 var images = require('./routes/images');
 var userRoute = require('./routes/user');
 
-//precatch any request coming in for any page
-//and force to the login page if the user does
-//not have a session
-app.use(function(req, res, next) {
-    //make sure the user is logged in
-    var sess = req.session;
-
-    if (sess && sess.userId) {
-        next();
-    } else {
-        //allow the login screen to be directly accessed without
-        //a session
-        if (req.url.indexOf('/login') <= -1) {
-            res.redirect('/login');
-        } else {
-            next();
-        }
-    }
-});
 
 //if a user is logged in, load up their conversation
 //list before calling into the route
@@ -166,7 +137,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
-//app.listen(3000, '192.168.1.100');
 
 module.exports = app;

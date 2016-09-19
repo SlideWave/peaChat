@@ -5,6 +5,7 @@ var mysql = require('mysql');
 var md5 = require('md5');
 var moment = require('moment');
 var async = require('async');
+var jwt = require('jsonwebtoken');
 
 var User = require('../user');
 var OpenChat = require('../openchat');
@@ -93,31 +94,21 @@ router.post('/register', function(req, res) {
 router.post('/', function(req, res) {
     User.authenticate(req.body.username, req.body.password, function(err, result) {
         if (err) {
-            connection.end();
             res.status(500).send('Could not complete request');
             return;
         }
 
         if (! result) {
-            res.render('login', {   title: 'Login',
-                                    error: 'Login failed, try again',
-                                    registrationURL: config.registrationURL,
-                                    pageScript: "login.page.js",
-                                    });
+            res.status(401).send('Unauthorized');
             return;
         }
 
-        var sess = req.session;
-        sess.userId = result.UUID;
-        sess.username = result.username;
+        //create a new token
+        var tok = jwt.sign({userId: result.UUID, username: result.username,
+                            timezone: req.body.timezone},
+                            config.tokenSecret, {expiresIn: "2d"});
 
-        if (req.body.timezone) {
-            sess.timezone = parseInt(req.body.timezone, "10");
-            res.redirect('/');
-        } else {
-            sess.timezone = 0;
-            res.redirect('/login/tzdetect');
-        }
+        res.json({status: "ok", token: tok});
     });
 });
 
