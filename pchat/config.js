@@ -39,6 +39,7 @@ config.plugins = {};
  */
 
 // identity-demo is a module for demonstrating how to create an identity plugin
+// see https://github.com/InWorldz/grid-identity-module for a working example
 //config.plugins['identity'] = './plugins/identity-demo.js';
 
 
