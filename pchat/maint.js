@@ -8,7 +8,7 @@ var Maint = function() {
 }
 
 /**
- * Creates the database
+ * CLeans up old and expired images
  */
 Maint.init = function(callback) {
     var connection = mysql.createConnection(config.siteDatabaseOptions);

@@ -40,10 +40,6 @@ router.get('/register', function(req, res) {
         return;
     }
 
-    var sess = req.session;
-
-    sess.timezone = parseInt(req.body.timezone, "10");
-
     var error = null;
     if (req.query.e == "taken") {
         error = "That username is already taken";

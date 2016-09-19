@@ -120,13 +120,20 @@
                     <h2 class="page-header"><%= title %></h2>
                 </div>
                 <!-- /.col-lg-12 -->
-                <% if (locals.error) { %>
-                    <div class="col-lg-12">
-                        <div class="alert alert-danger">
-                            <a href="#" class="close" data-dismiss="alert">&times;</a>
-                            <%= error %>
-                        </div>
+                <%
+                    var errclass = "none";
+                    if (locals.error) {
+                        errclass = "block";
+                    } else {
+                        locals.error = "";
+                    }
+                %>
+
+                <div class="col-lg-12">
+                    <div class="alert alert-danger" style="display: <%= errclass %>">
+                        <a href="#" class="close" onclick="$('.alert').hide()">&times;</a>
+                        <span id="err-message"><%= error %></span>
                     </div>
-                    <!-- /.col-lg-12 -->
-                <% } %>
+                </div>
+                <!-- /.col-lg-12 -->
             </div>
