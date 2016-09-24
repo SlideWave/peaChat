@@ -342,27 +342,11 @@ router.get('/roomlist', function(req, res) {
  * route so that it doesnt swallow other calls
  */
 router.get('/:id', function(req, res) {
-    var sess = req.session;
-
-    OpenChat.findChatInfo(sess.userId, req.params.id, function(err, info) {
-        if (err || !info) {
-            if (err) console.error(err);
-            res.status(500).send('Could not complete request');
-            return;
-        }
-
-        res.render('chat',
-            {   title: info.title,
-                username: sess.username,
-                pageScript: ['chat.page.js', 'dropzone.page.js'],
-                session: sess,
-                conversationId: info.conversationId,
-                checkpoint: info.checkpoint,
-                chatType: info.type,
-                partnerId: info.partnerId
-            });
+    res.render('chat',
+        {   title: "Empty",
+            pageScript: ['chat.page.js', 'dropzone.page.js'],
+            conversationId: req.params.id
     });
-
 });
 
 module.exports = router;
