@@ -1,16 +1,22 @@
 var express = require('express');
 var router = express.Router();
+var jwt = require('express-jwt');
+
+
 var ChatMessage = require('../chatmessage');
 var OpenChat = require('../openchat');
 var User = require('../user');
 var PublicChat = require('../publicchat');
+var config = require('../config');
+
+
 
 /**
  * Returns the JSON summary of open chats for the given user
  */
 router.get('/summary',
+    jwt({ secret: config.tokenSecret}),
     function(req, res) {
-
         OpenChat.getOpenChats(req.user.userId, function(err, chats) {
             if (err) {
                 console.error(err);

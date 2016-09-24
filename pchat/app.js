@@ -35,7 +35,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var jwt = require('express-jwt');
 
 var config = require('./config');
 var OpenChat = require('./openchat');
@@ -78,11 +77,6 @@ var chat = require('./routes/chat');
 var profile = require('./routes/profile');
 var images = require('./routes/images');
 var userRoute = require('./routes/user');
-
-app.use(jwt({ secret: config.tokenSecret}).
-    unless({
-        path: ['/', '/login', '/login/']
-    }));
 
 app.use('/', routes);
 app.use('/login', login);
