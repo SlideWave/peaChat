@@ -22,3 +22,7 @@ function parseURL(url) {
         hash: parser.hash
     };
 }
+
+function doLogout() {
+
+}

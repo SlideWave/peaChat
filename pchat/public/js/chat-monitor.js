@@ -26,6 +26,11 @@ ChatMonitor.knownChats = {};
  */
 ChatMonitor.pollRate = 10000;
 
+/**
+ * Whether or not this is the first run of the chat update
+ */
+ChatMonitor.firstRun = true;
+
 
 /**
  * Register for notification when a new chat is created. This usually means
@@ -94,6 +99,7 @@ ChatMonitor.findNewChats = function(callback) {
         dataType: "json",
         url: "/chat/summary",
         contentType: "application/json",
+        headers: {"Authorization": "Bearer " + localStorage.getItem('token')},
         success:
             function(data) {
                 //compare the chats we know about to this list
@@ -155,6 +161,7 @@ ChatMonitor.checkConversations = function(finishedCallback) {
  */
 function monitorCheckTimer() {
     ChatMonitor.checkConversations(function (err) {
+        ChatMonitor.firstRun = false;
         scheduleCheckTimer();
     });
 }
@@ -164,15 +171,6 @@ function scheduleCheckTimer() {
 }
 
 $(document).ready(function() {
-    //when we first load, retrieve the current timestamp for each
-    //chat that we know is open
-    for (var i = 0, len = openChats.length; i < len; i++) {
-        var chat = openChats[i];
-
-        ChatMonitor.knownChats[chat.conversationId] = {chatData: chat, timestamp: 0};
-    }
-
-    ChatMonitor.updateTimestamps(function (changes) {
-        scheduleCheckTimer();
-    });
+    //immediately pull chats
+    monitorCheckTimer();
 });

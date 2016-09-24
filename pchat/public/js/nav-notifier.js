@@ -2,7 +2,7 @@
 // Changes the navigation to indicate when new messages come in
 //
 
-function navNotifyNewChat(chat) {
+function navNotifyNewChat(chat, firstRun) {
     var IM = 0;
 
     if (chat.type == IM) {
@@ -11,8 +11,9 @@ function navNotifyNewChat(chat) {
         cls = "fa fa-group fa-fw";
     }
 
+    var newConvoClass = ChatMonitor.firstRun ? '' : ' new-convo';
     var newItem = '<li><a href="/chat/' + chat.conversationId +
-        '"><i class="' + cls + ' new-convo"></i> ' + chat.title + '</a></li>';
+        '"><i class="' + cls + newConvoClass + '"></i> ' + chat.title + '</a></li>';
 
     $(newItem).insertBefore("#convo-div");
 }
@@ -23,8 +24,6 @@ function navNotifyChatUpdated(chat) {
     }
 }
 
-$(document).ready(function() {
-    //subscribe to notifications from the chat monitor
-    ChatMonitor.onNewChatCreated(navNotifyNewChat);
-    ChatMonitor.onChatUpdated(navNotifyChatUpdated);
-});
+//subscribe to notifications from the chat monitor
+ChatMonitor.onNewChatCreated(navNotifyNewChat);
+ChatMonitor.onChatUpdated(navNotifyChatUpdated);

@@ -35,9 +35,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var jwt = require('express-jwt');
 
 var config = require('./config');
 var OpenChat = require('./openchat');
+
 
 String.prototype.toProperCase = function () {
     return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -77,28 +79,10 @@ var profile = require('./routes/profile');
 var images = require('./routes/images');
 var userRoute = require('./routes/user');
 
-
-//if a user is logged in, load up their conversation
-//list before calling into the route
-app.use(function(req, res, next) {
-    //make sure the user is logged in
-    var sess = req.session;
-
-    if (sess && sess.userId) {
-        //register OpenChat for all views
-        app.locals.OpenChat = OpenChat;
-
-        //we have a logged in user. get their message list
-        OpenChat.getOpenChats(sess.userId, function(err, chats) {
-            app.locals.openChats = chats;
-            next();
-        });
-
-    } else {
-        next();
-    }
-});
-
+app.use(jwt({ secret: config.tokenSecret}).
+    unless({
+        path: ['/', '/login', '/login/']
+    }));
 
 app.use('/', routes);
 app.use('/login', login);

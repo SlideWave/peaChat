@@ -8,18 +8,18 @@ var PublicChat = require('../publicchat');
 /**
  * Returns the JSON summary of open chats for the given user
  */
-router.get('/summary', function(req, res) {
-    var sess = req.session;
+router.get('/summary',
+    function(req, res) {
 
-    OpenChat.getOpenChats(sess.userId, function(err, chats) {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Could not complete request');
-            return;
-        }
+        OpenChat.getOpenChats(req.user.userId, function(err, chats) {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Could not complete request');
+                return;
+            }
 
-        res.json(chats);
-    });
+            res.json(chats);
+        });
 });
 
 /**
