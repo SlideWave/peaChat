@@ -2,7 +2,9 @@ import React, { PropTypes } from 'react';
 import {connect} from 'react-redux';
 //import { Link, IndexLink } from 'react-router';
 import NavBar from '../components/NavBar';
+
 import '../styles/bootstrap.min.css';
+import '../styles/metisMenu.min.css';
 import '../styles/bootstrap-datetimepicker.min.css';
 import '../styles/sb-admin-2.css';
 

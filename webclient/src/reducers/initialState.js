@@ -3,7 +3,7 @@ export default {
     navSections: [
       {name: "main", hasDivider: false,
         items: [
-          {href: "/", icon: "fa-home", title: "home"}
+          {href: "/", icon: "fa-home", title: "Home"}
         ]
       }
     ]

@@ -1,14 +1,10 @@
 import React, {PropTypes} from 'react';
-import { Link } from 'react-router';
+import { NavItem } from 'react-bootstrap';
 
 class NavElement extends React.Component {
   render() {
     return (
-      <li>
-        <Link to={this.props.href}>
-          <i className={"fa " + this.props.icon + " fa-fw"}/> {this.props.title}
-        </Link>
-      </li>
+      <NavItem href={this.props.href}><i className={"fa " + this.props.icon + " fa-fw"}/>{this.props.title}</NavItem>
     );
   }
 }

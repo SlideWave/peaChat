@@ -1,4 +1,3 @@
-import objectAssign from 'object-assign';
 import initialState from './initialState';
 
 // IMPORTANT: Note that with Redux, state should NEVER be changed.
@@ -7,8 +6,6 @@ import initialState from './initialState';
 // Note that I'm using Object.assign to create a copy of current state
 // and update values on the copy.
 export default function fuelSavingsReducer(state = initialState.chat, action) {
-  let newState;
-
   switch (action.type) {
     default:
       return state;

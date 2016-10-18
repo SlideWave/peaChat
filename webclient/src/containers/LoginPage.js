@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-export const LoginPage = () => {
+const LoginPage = () => {
   return (
       <div className="row">
         <div className="col-lg-12">
