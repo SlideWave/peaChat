@@ -5,8 +5,8 @@ import IconButton from 'material-ui/IconButton';
 import spacing from 'material-ui/styles/spacing';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {darkWhite, lightWhite, grey900} from 'material-ui/styles/colors';
-import AppNavDrawer from './AppNavDrawer';
-import FullWidthSection from './FullWidthSection';
+import AppNavDrawer from '../components/AppNavDrawer';
+import FullWidthSection from '../components/FullWidthSection';
 import withWidth, {MEDIUM, LARGE} from 'material-ui/utils/withWidth';
 
 class Master extends Component {
@@ -167,7 +167,7 @@ class Master extends Component {
 
     return (
       <div>
-        <Title render="Material-UI" />
+        <Title render="peaChat" />
         <AppBar
           onLeftIconButtonTouchTap={this.handleTouchTapLeftIconButton}
           title={title}
@@ -200,7 +200,7 @@ class Master extends Component {
           open={navDrawerOpen}
         />
         <FullWidthSection style={styles.footer}>
-          skjadhdkjshhh
+
         </FullWidthSection>
       </div>
     );
