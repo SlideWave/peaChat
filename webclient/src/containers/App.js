@@ -1,16 +1,19 @@
-import React, { PropTypes } from 'react';
 import {connect} from 'react-redux';
-//import { Link, IndexLink } from 'react-router';
-import NavBar from '../components/NavBar';
+import React, {Component, PropTypes} from 'react';
+import {darkWhite, lightWhite, grey900} from 'material-ui/styles/colors';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Master from '../components/Master';
 
+injectTapEventPlugin();
 
 const App = (props) => {
   return (
-    <NavBar brand="peaChat" sections={props.navSections}>
-      {props.children}
-    </NavBar>
+    <MuiThemeProvider>
+      <Master width={1000} location={{"pathName": "s"} }/>
+    </MuiThemeProvider>
   );
-};
+}
 
 App.propTypes = {
   children: PropTypes.element,
