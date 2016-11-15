@@ -144,11 +144,7 @@ class Master extends Component {
 
     const router = this.context.router;
     const styles = this.getStyles();
-    const title =
-      router.isActive('/get-started') ? 'Get Started' :
-        router.isActive('/customization') ? 'Customization' :
-          router.isActive('/components') ? 'Components' :
-            router.isActive('/discover-more') ? 'Discover More' : '';
+    const title = 'splat';
 
     let docked = false;
     let showMenuIconButton = true;
@@ -200,7 +196,7 @@ class Master extends Component {
           open={navDrawerOpen}
         />
         <FullWidthSection style={styles.footer}>
-
+          Test
         </FullWidthSection>
       </div>
     );
