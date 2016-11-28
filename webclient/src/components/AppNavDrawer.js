@@ -7,6 +7,7 @@ import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import {spacing, typography, zIndex} from 'material-ui/styles';
 import {cyan500} from 'material-ui/styles/colors';
+import {browserHistory} from 'react-router';
 
 const SelectableList = makeSelectable(List);
 
@@ -94,7 +95,7 @@ class AppNavDrawer extends Component {
   }
 
   handleRequestChangeLink = (event, value) => {
-    window.location = value;
+    browserHistory.push(value);
   };
 
   handleTouchTapHeader = () => {
@@ -129,8 +130,8 @@ class AppNavDrawer extends Component {
           onChange={this.handleRequestChangeLink}
         >
           <Subheader>Instant Messages</Subheader>
-          <ListItem primaryText="IM with A" value="https://github.com/callemall/material-ui" />
-          <ListItem primaryText="IM with B" value="http://facebook.github.io/react" />
+          <ListItem primaryText="IM with A" value="/im"/>
+          <ListItem primaryText="IM with B" value="/im" />
         </SelectableList>
         <Divider />
 
