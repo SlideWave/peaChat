@@ -1,4 +1,7 @@
 import React, {Component, PropTypes} from 'react';
+import MessageGroup from './MessageGroup';
+import {List} from 'material-ui';
+
 class MessageList extends Component {
   static propTypes = {
     style: PropTypes.object,
@@ -34,13 +37,9 @@ class MessageList extends Component {
     const styles = this.getStyles();
 
     return (
-      <div
-        style={Object.assign(
-          styles.root,
-          style)}
-      >
-        {this.props.title}
-      </div>
+      <List>
+        <MessageGroup avatar="blammo"/>
+      </List>
     );
   }
 }

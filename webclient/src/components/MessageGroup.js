@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import {List, ListItem, Avatar} from 'material-ui';
+import {ListItem, Avatar} from 'material-ui';
+import ClearFix from 'material-ui/internal/ClearFix';
 
 
 class MessageGroup extends Component {
@@ -16,15 +17,14 @@ class MessageGroup extends Component {
 
   getStyles() {
     return {
-      root: {
-        padding: 0,
-        boxSizing: 'border-box',
-        width: '100%'
+      leftBox: {
+        float: "left",
+        width: 96,
+        height: "100%"
       },
 
-      content: {
-        maxWidth: 1200,
-        margin: '0 auto',
+      contentBox: {
+        float: "left"
       }
     };
   }
@@ -38,7 +38,17 @@ class MessageGroup extends Component {
     const styles = this.getStyles();
 
     return (
-      <div></div>
+      <ListItem>
+        <ClearFix>
+        <div style={styles.leftBox}>
+          <Avatar>A</Avatar>
+        </div>
+        <div style={styles.contentBox}>
+          kjadshhj hk dsh dashksda hkhadsk hk dsakh adskh sdakh dsakhds a kh adskhsd akh dsahk khdsahk sdakh sda
+          dsisuysdfaiuslyk ljfsdahfd ksaysyflkusdfi luasdf dsfuia tsdftiuastfaiusdf tiuads tiusfaiuogfd iugto
+        </div>
+        </ClearFix>
+      </ListItem>
     );
   }
 }
